@@ -1,0 +1,30 @@
+{
+  "id": "3731052",
+  "name": "鼓楼e学校",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "145733",
+      "name": "通讯录_填充",
+      "font_class": "tongxunlutianchong",
+      "unicode": "e699",
+      "unicode_decimal": 59033
+    },
+    {
+      "icon_id": "4936676",
+      "name": "api-fill",
+      "font_class": "api-fill",
+      "unicode": "e86d",
+      "unicode_decimal": 59501
+    },
+    {
+      "icon_id": "8802668",
+      "name": "权限",
+      "font_class": "quanxian",
+      "unicode": "e656",
+      "unicode_decimal": 58966
+    }
+  ]
+}

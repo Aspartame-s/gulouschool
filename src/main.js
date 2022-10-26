@@ -6,6 +6,7 @@ import './assets/styles/common.css'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import VueQriously from 'vue-qriously'
+import './assets/iconFont/iconfont.css'
 
 Vue.config.productionTip = false
 
