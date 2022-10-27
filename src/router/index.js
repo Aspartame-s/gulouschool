@@ -35,9 +35,19 @@ const routes = [
         component: () => import('../views/pages/quanxian-rizhi/maintenanceNote/maintenanceNote.vue')
       },
       {
-        path: '/api-management',
-        name: 'api-management',
-        component: () => import('../views/pages/api-guanli/api/apiManagement.vue')
+        path: '/api-audit',
+        name: 'api-audit',
+        component: () => import('../views/pages/api-guanli/apiAudit/apiAudit.vue')
+      },
+      {
+        path: '/api-statistical',
+        name: 'api-statistical',
+        component: () => import('../views/pages/api-guanli/apiStatistical/apiStatistical.vue')
+      },
+      {
+        path: '/test',
+        name: 'test',
+        component: () => import('../views/pages/test.vue')
       }
     ]
   }

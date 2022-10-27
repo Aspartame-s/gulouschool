@@ -17,17 +17,22 @@
       </div>
     </div>
     <div class="content-container">
-        <router-view></router-view>
+      <div class="bread-crumb-container">
+        <bread-crumb :data="breadCrumbList"></bread-crumb>
+      </div>
+      <router-view></router-view>
     </div>
   </div>
 </template>
 
 <script>
 // import myitem from "./myitem.vue";
+import { recursiveFunction } from "../../utils/recursive";
 export default {
   name: "Index",
   components: {
     menuItem: () => import("../../components/menuItem.vue"),
+    breadCrumb: () => import("../../components/breadCrumb.vue"),
   },
   data() {
     return {
@@ -56,7 +61,7 @@ export default {
         {
           name: "权限与日志",
           icon: "iconfont icon-quanxian",
-          path: "权限",
+          path: "权限与日志",
           children: [
             {
               name: "权限管理",
@@ -75,25 +80,57 @@ export default {
         {
           name: "API接入管理",
           icon: "iconfont icon-api-fill",
-          path: "/api-management",
-          children: []
+          path: "API接入管理",
+          children: [
+            {
+              name: "API接入审核",
+              icon: "",
+              path: "/api-audit",
+              children: [],
+            },
+            {
+              name: "API接入统计",
+              icon: "",
+              path: "/api-statistical",
+              children: [],
+            },
+          ],
         },
-      ]
+        {
+          name: "测试",
+          icon: "iconfont icon-api-fill",
+          path: "/test",
+          children: [],
+        },
+      ],
+      breadCrumbList: [],
     };
   },
   computed: {},
-  watch: {},
+  watch: {
+    $route(e) {
+      // console.log(e);
+      let arr = recursiveFunction(e.fullPath, this.menuList);
+      this.breadCrumbList.push(arr[0].name);
+    //   console.log(arr);
+    },
+  },
   methods: {
-    menuSelect(index) {
-        console.log(index)
+    menuSelect(index, indexPath) {
+        // console.log(indexPath)
+      this.breadCrumbList = [];
+      this.breadCrumbList.push(indexPath[0]);
       this.activeIndex = index;
     },
   },
   created() {
     this.query = this.$route.query;
-    // console.log(this.$route.query);
+    // console.log(this.$route.path);
   },
-  mounted() {},
+  mounted() {
+    // let arr = recursiveFunction("/education-department", this.menuList);
+    // console.log(arr);
+  },
 };
 </script>
 <style lang='scss' scoped>
@@ -122,14 +159,20 @@ export default {
     .menu {
       width: 100%;
       flex-grow: 1;
-    //   background-color: pink;
+      //   background-color: pink;
     }
   }
   .content-container {
+    padding: 68px 36px 24px;
     flex: 1;
     background-color: #fff;
     border-radius: 24px 0 0 24px;
     box-shadow: -2px 0 8px 0 rgba(0, 0, 0, 0.15);
+    .bread-crumb-container {
+      width: 100%;
+      height: 73px;
+      background-color: #fafafa;
+    }
   }
 }
 </style>

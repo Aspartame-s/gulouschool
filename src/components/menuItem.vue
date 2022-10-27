@@ -8,15 +8,15 @@
         :index="item.path"
         v-if="item.children.length > 0"
       >
-        <template slot="title">
-          <i :class="item.icon"></i>
+        <template slot="title" style="padding-left: 56rpx!important">
+          <i :class="item.icon ? item.icon : 'iconfont icon-zhanweifu'"></i>
           <span>{{ item.name }}</span>
         </template>
         <menu-item :data="item.children"></menu-item>
       </el-submenu>
       <!-- 情况二：没子集的情况： -->
-      <el-menu-item :key="index" v-else :index="item.path">
-        <i :class="item.icon"></i>
+      <el-menu-item :key="index" v-else :index="item.path" @click="selectMenuItem(item)">
+        <i :class="item.icon ? item.icon : 'iconfont icon-zhanweifu'"></i>
         <span slot="title">{{ item.name }}</span>
       </el-menu-item>
     </template>
@@ -38,7 +38,11 @@ export default {
   },
   computed: {},
   watch: {},
-  methods: {},
+  methods: {
+      selectMenuItem(item) {
+          console.log(item)
+      }
+  },
   created() {},
   mounted() {},
 };
@@ -49,7 +53,7 @@ export default {
   line-height: 30px;
   margin-bottom: 12px;
   font-size: 16px;
-  padding-left: 24px;
+  padding-left: 24px !important;
   padding-right: 0 !important;
   text-align: left;
   color: #999999;
@@ -81,30 +85,30 @@ export default {
       font-size: 18px;
     }
   }
-  li {
-    font-size: 16px;
-    // height: 26px;
-    margin-bottom: 12px;
-    text-align: left;
-    padding-left: 56px!important;
-    padding-right: 0;
-  }
+  //    .el-submenu{
+  //     font-size: 16px;
+  //     // height: 26px;
+  //     margin-bottom: 12px;
+  //     text-align: left;
+  //     padding-left: 56px !important;
+  //     padding-right: 0;
+  //   }
   .el-submenu__title:hover {
-    background-color: rgba(0, 216, 138, 0.15) !important;
-  }
-  .el-menu-item:hover {
     background-color: rgba(0, 216, 138, 0.15) !important;
   }
 }
 /deep/ .is-active {
   .iconfont {
     color: #00d88a;
+    // color: transparent;
   }
   .el-submenu__title {
     color: #00d88a;
   }
-  .is-active {
-    background-color: rgba(0, 216, 138, 0.15) !important;
+  .el-menu-item {
+    &.is-active {
+      background-color: rgba(0, 216, 138, 0.15) !important;
+    }
   }
 }
 </style>
