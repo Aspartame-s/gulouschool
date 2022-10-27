@@ -44,7 +44,51 @@ export default {
 };
 </script>
 <style lang='scss' scoped>
+/deep/ .el-menu-item {
+  height: 30px;
+  line-height: 30px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  padding-left: 24px;
+  padding-right: 0 !important;
+  text-align: left;
+  color: #999999;
+  .iconfont {
+    margin-right: 12px;
+    font-size: 18px;
+  }
+  &:hover {
+    background-color: rgba(0, 216, 138, 0.15) !important;
+  }
+}
 /deep/ .el-submenu {
+  .el-submenu__title {
+    font-size: 16px;
+    height: 30px;
+    line-height: 30px;
+    margin-bottom: 12px;
+    padding-left: 24px !important;
+    padding-right: 0 !important;
+    text-align: left;
+    color: #999999;
+    span {
+      height: 30px;
+      line-height: 30px;
+      display: inline-block;
+    }
+    .iconfont {
+      margin-right: 12px;
+      font-size: 18px;
+    }
+  }
+  li {
+    font-size: 16px;
+    // height: 26px;
+    margin-bottom: 12px;
+    text-align: left;
+    padding-left: 56px!important;
+    padding-right: 0;
+  }
   .el-submenu__title:hover {
     background-color: rgba(0, 216, 138, 0.15) !important;
   }
