@@ -15,38 +15,86 @@ const routes = [
     component: () => import('../views/Index/Index.vue'),
     children: [
       {
-        path: '/education-department',
-        name: 'education-department',
-        component: () => import('../views/pages/tongxunlu-guanli/educationDepartment/educationDepartment.vue')
+        path: '/address-management',
+        name: 'address-management',
+        meta: {
+          title: '通讯录'
+        },
+        children: [
+          {
+            path: 'education-department',
+            name: 'education-department',
+            meta: {
+              title: '教育主管部门'
+            },
+            component: () => import('../views/pages/tongxunlu-guanli/educationDepartment/educationDepartment.vue')
+          },
+          {
+            path: 'school',
+            name: 'school',
+            meta: {
+              title: '学校'
+            },
+            component: () => import('../views/pages/tongxunlu-guanli/school/school.vue')
+          },
+        ]
       },
       {
-        path: '/school',
-        name: 'school',
-        component: () => import('../views/pages/tongxunlu-guanli/school/school.vue')
+        path: '/permissions',
+        name: 'permissions',
+        meta: {
+          title: '权限与日志'
+        },
+        children: [
+          {
+            path: 'permissions-management',
+            name: 'permissions-management',
+            meta: {
+              title: '权限管理'
+            },
+            component: () => import('../views/pages/quanxian-rizhi/permissionsManagement/permissionsManagement.vue')
+          },
+          {
+            path: 'maintenance-note',
+            name: 'maintenance-note',
+            meta: {
+              title: '维护日志'
+            },
+            component: () => import('../views/pages/quanxian-rizhi/maintenanceNote/maintenanceNote.vue')
+          }
+        ]
       },
       {
-        path: '/permissions-management',
-        name: 'permissions-management',
-        component: () => import('../views/pages/quanxian-rizhi/permissionsManagement/permissionsManagement.vue')
-      },
-      {
-        path: '/maintenance-note',
-        name: 'maintenance-note',
-        component: () => import('../views/pages/quanxian-rizhi/maintenanceNote/maintenanceNote.vue')
-      },
-      {
-        path: '/api-audit',
-        name: 'api-audit',
-        component: () => import('../views/pages/api-guanli/apiAudit/apiAudit.vue')
-      },
-      {
-        path: '/api-statistical',
-        name: 'api-statistical',
-        component: () => import('../views/pages/api-guanli/apiStatistical/apiStatistical.vue')
+        path: '/api',
+        name: 'api',
+        meta: {
+          title: 'API接入管理'
+        },
+        children: [
+          {
+            path: 'api-audit',
+            name: 'api-audit',
+            meta: {
+              title: 'API接入审核'
+            },
+            component: () => import('../views/pages/api-guanli/apiAudit/apiAudit.vue')
+          },
+          {
+            path: 'api-statistical',
+            name: 'api-statistical',
+            meta: {
+              title: 'API接入统计'
+            },
+            component: () => import('../views/pages/api-guanli/apiStatistical/apiStatistical.vue')
+          },
+        ]
       },
       {
         path: '/test',
         name: 'test',
+        meta: {
+          title: '测试'
+        },
         component: () => import('../views/pages/test.vue')
       }
     ]

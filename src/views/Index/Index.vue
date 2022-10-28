@@ -1,13 +1,13 @@
 <template>
   <div class="container">
     <div class="menu-container">
-      <img src="../../assets/img/绿色2 1.png" alt="" class="menu-icon" />
+      <img src="../../assets/img/Group 25.png" alt="" class="menu-icon" />
       <div class="product-name">鼓楼e学校数据平台</div>
       <div class="menu">
         <el-menu
           :default-active="activeIndex"
           background-color="transparent"
-          active-text-color="#00D88A"
+          active-text-color="#11B07A"
           class="el-menu-vertical-demo"
           @select="menuSelect"
           router
@@ -17,10 +17,18 @@
       </div>
     </div>
     <div class="content-container">
-      <div class="bread-crumb-container">
-        <bread-crumb :data="breadCrumbList"></bread-crumb>
+      <div class="message-container">
+        <div class="avatar"></div>
+        <span class="name">夏老师</span>
+        <img src="../../assets/img/tip.png" alt="" class="tip-icon" />
+        <span class="message">您好！您当前有新的事物要处理。</span>
       </div>
-      <router-view></router-view>
+      <div class="bread-crumb-container">
+        <bread-crumb :data="breadCrumbList" style="margin-bottom: 6px"></bread-crumb>
+        <div class="current-breadcrumb">单位管理</div>
+        <div class="current-line"></div>
+      </div>
+      <router-view style="flex-grow: 1"></router-view>
     </div>
   </div>
 </template>
@@ -47,13 +55,13 @@ export default {
             {
               name: "教育主管部门",
               icon: "",
-              path: "/education-department",
+              path: "/address-management/education-department",
               children: [],
             },
             {
               name: "学校",
               icon: "",
-              path: "/school",
+              path: "/address-management/school",
               children: [],
             },
           ],
@@ -66,13 +74,13 @@ export default {
             {
               name: "权限管理",
               icon: "",
-              path: "/permissions-management",
+              path: "/permissions/permissions-management",
               children: [],
             },
             {
               name: "维护日志",
               icon: "",
-              path: "/maintenance-note",
+              path: "/permissions/maintenance-note",
               children: [],
             },
           ],
@@ -85,13 +93,13 @@ export default {
             {
               name: "API接入审核",
               icon: "",
-              path: "/api-audit",
+              path: "/api/api-audit",
               children: [],
             },
             {
               name: "API接入统计",
               icon: "",
-              path: "/api-statistical",
+              path: "/api/api-statistical",
               children: [],
             },
           ],
@@ -109,23 +117,28 @@ export default {
   computed: {},
   watch: {
     $route(e) {
-      // console.log(e);
-      let arr = recursiveFunction(e.fullPath, this.menuList);
-      this.breadCrumbList.push(arr[0].name);
-    //   console.log(arr);
+      let matchedArr = e.matched;
+      matchedArr.shift();
+      this.breadCrumbList = matchedArr;
+      //   console.log(this)
+      //   let arr = recursiveFunction(e.fullPath, this.menuList);
+      //   this.breadCrumbList.push(arr[0].name);
+      //   console.log(arr);
     },
   },
   methods: {
     menuSelect(index, indexPath) {
-        // console.log(indexPath)
-      this.breadCrumbList = [];
-      this.breadCrumbList.push(indexPath[0]);
+      // console.log(indexPath)
+      //   this.breadCrumbList = [];
+      //   this.breadCrumbList.push(indexPath[0]);
       this.activeIndex = index;
     },
   },
   created() {
     this.query = this.$route.query;
-    // console.log(this.$route.path);
+    let matchedArr = this.$route.matched;
+    matchedArr.shift();
+    this.breadCrumbList = matchedArr;
   },
   mounted() {
     // let arr = recursiveFunction("/education-department", this.menuList);
@@ -136,23 +149,30 @@ export default {
 <style lang='scss' scoped>
 .container {
   display: flex;
+  background-color: #f0f6f4;
   .menu-container {
-    width: 228px;
+    width: 192px;
     height: auto;
     min-height: 100vh;
-    // background-color: pink;
+    background-color: #fff;
+    border-radius: 0 24px 24px 0;
+    margin-right: 32px;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 24px;
+    box-shadow: 6px 0 10px 0 rgba(59, 84, 60, 0.15);
+    /deep/ .el-menu {
+      border-right: none !important;
+    }
     .menu-icon {
       width: 40px;
-      height: 33px;
+      height: 34px;
       margin-bottom: 12px;
     }
     .product-name {
       font-size: 18px;
-      color: #00d88a;
+      color: #11b07a;
       font-weight: 500;
       margin-bottom: 36px;
     }
@@ -163,15 +183,64 @@ export default {
     }
   }
   .content-container {
-    padding: 68px 36px 24px;
+      display: flex;
+      flex-direction: column;
+    padding: 30px 32px 30px 0;
     flex: 1;
-    background-color: #fff;
-    border-radius: 24px 0 0 24px;
-    box-shadow: -2px 0 8px 0 rgba(0, 0, 0, 0.15);
+    // background-color: #fff;
+    // border-radius: 24px 0 0 24px;
+    // box-shadow: -2px 0 8px 0 rgba(0, 0, 0, 0.15);
+    .message-container {
+      width: 100%;
+      height: 48px;
+      background-color: #fff;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      padding-left: 36px;
+      .avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        margin-right: 8px;
+        background-color: #11b07a;
+      }
+      .name {
+        font-size: 14px;
+        color: #666666;
+        font-weight: 500;
+        margin-right: 84px;
+      }
+      .tip-icon {
+        width: 22px;
+        height: 22px;
+        margin-right: 8px;
+      }
+      .message {
+        font-size: 14px;
+        color: #666666;
+      }
+    }
     .bread-crumb-container {
       width: 100%;
       height: 73px;
-      background-color: #fafafa;
+      padding-left: 36px;
+      padding-top: 10px;
+      margin-bottom: 5px;
+    //   background-color: #fafafa;
+    .current-breadcrumb {
+        font-size: 16px;
+        color: #11B07A;
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+    .current-line {
+        width: 46px;
+        height: 3px;
+        border-radius: 10px;
+        background: linear-gradient(to right, rgba(17, 176, 122, 1), rgba(20, 177, 124, 0.19), rgba(20, 177, 124, 0));
+    }
     }
   }
 }

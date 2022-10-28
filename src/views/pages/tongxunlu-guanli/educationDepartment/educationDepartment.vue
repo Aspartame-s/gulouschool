@@ -1,5 +1,10 @@
 <template>
-<div>教育主管部门</div>
+<div class="item-container">
+    <div class="handle-btn-container">
+        <div class="add-unit green-btn">新建单位</div>
+        <div class="freeze-unit green-btn">冻结单位</div>
+    </div>
+</div>
 </template>
 
 <script>

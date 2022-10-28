@@ -24,6 +24,40 @@
    min-height: 100vh;
     background-color: #F2F2F2;
  }
+ .item-container {
+   width: 100%;
+   background-color: #fff;
+   border-radius: 16px;
+   padding: 24px 36px;
+ }
+ .handle-btn-container {
+   width: 100%;
+   display: flex;
+   margin-bottom: 24px;
+ }
+ .green-btn {
+   width: auto;
+   padding: 0 8px;
+   height: 28px;
+   display: flex;
+   align-items: center;
+   border-radius: 4px;
+   background-color: #02BBA4;
+   color: #fff;
+   font-size: 14px;
+   margin-right: 24px;
+ }
+ .red-btn {
+  width: auto;
+  padding: 0 8px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  background-color: #FF7B7B;
+  color: #fff;
+  font-size: 14px;
+}
 
 
 
