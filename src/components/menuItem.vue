@@ -15,7 +15,7 @@
         <menu-item :data="item.children"></menu-item>
       </el-submenu>
       <!-- 情况二：没子集的情况： -->
-      <el-menu-item :key="index" v-else :index="item.path">
+      <el-menu-item :key="index" v-else :index="item.path" @click="selectMenuItem(item)">
         <i :class="item.icon ? item.icon : 'iconfont icon-zhanweifu'"></i>
         <span slot="title">{{ item.name }}</span>
       </el-menu-item>
@@ -39,9 +39,9 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    //   selectMenuItem(item) {
-    //       console.log(item)
-    //   }
+      selectMenuItem(item) {
+          console.log(item)
+      }
   },
   created() {},
   mounted() {},
@@ -109,39 +109,46 @@ export default {
   }
   .el-menu-item {
     &.is-active {
-        background-color: #F0F6F4!important;
+      background-color: #f0f6f4 !important;
       position: relative;
+    //   width: 210px;
+      //   box-shadow: 6px 5px 10px 0 rgba(59, 84, 60, 0.15);
     //   &::before {
     //     content: "";
     //     position: absolute;
-    //     width: 20px;
-    //     height: 20px;
-    //     right: 0;
-    //     top: -20px;
-    //     background: #F0F6F4;
-    //     // border-radius: 50%;
+    //     width: 24px;
+    //     height: 24px;
+    //     right: 18px;
+    //     top: -24px;
+    //     background: #f0f6f4;
+    //     // background: pink;
+    //     // box-shadow: 7px 7px 10px 2px rgba(59, 84, 60, 0.15);
+    //     // border-radius: 0 0 40px 0;
+    //     //  filter: contrast(20);
+    //     z-index: 10000;
     //     background: radial-gradient(
     //       circle at 0 0,
-    //       transparent 20px,
-    //       #F0F6F4 21px
+    //       transparent 24px,
+    //       #F0F6F4 24px,
     //     );
+       
     //   }
     //   &::after {
     //     content: "";
     //     position: absolute;
-    //     width: 20px;
-    //     height: 20px;
-    //     right: 0;
-    //     bottom: -20px;
-    //     background: #F0F6F4;
+    //     width: 24px;
+    //     height: 24px;
+    //     right: 18px;
+    //     bottom: -24px;
+    //     // background: #F0F6F4;
     //     // border-radius: 50%;
     //     background: radial-gradient(
     //       circle at 0 100%,
-    //       transparent 20px,
-    //       #F0F6F4 21px
+    //       transparent 24px,
+    //       #f0f6f4 24px
     //     );
     //   }
-      //   background-color: rgba(0, 216, 138, 0.15) !important;
+      //   //   background-color: rgba(0, 216, 138, 0.15) !important;
     }
   }
 }

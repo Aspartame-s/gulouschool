@@ -179,7 +179,8 @@ export default {
     .menu {
       width: 100%;
       flex-grow: 1;
-      //   background-color: pink;
+    //   overflow: hidden;
+        // background-color: pink;
     }
   }
   .content-container {
