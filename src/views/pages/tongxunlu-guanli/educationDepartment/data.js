@@ -1,34 +1,72 @@
-export const formHeader = [
+export const formHeader = [ //form 表头数据
     {
       itemType: "text", // 输入框类型
-      labelName: "姓名", // 输入框名字
+      labelName: "单位名称", // 输入框名字
       propName: "name", // 输入框字段名
-      isRequired: false, // 是否必填
+      isRequired: true, // 是否必填
       readonly: true,
-      placeholder: "请填写名字", // 输入框placeholder提示语加上，可用于告知用户规则
-    },
-    {
-      itemType: "number",
-      labelName: "年龄",
-      propName: "age",
-      isRequired: true,
-      readonly: true,
-      //   unit: "year", // 数字类型的要有单位
-      placeholder: "请输入年龄",
+      placeholder: "请输入", // 输入框placeholder提示语加上，可用于告知用户规则
     },
     {
         itemType: "number",
-        labelName: "年龄",
-        propName: "age",
+        labelName: "统一社会信用码",
+        propName: "code",
         isRequired: true,
         readonly: true,
-        //   unit: "year", // 数字类型的要有单位
-        placeholder: "请输入年龄",
+        placeholder: "请输入",
+      },
+      {
+        itemType: "text",
+        labelName: "联系人",
+        propName: "contact",
+        isRequired: true,
+        readonly: true,
+        placeholder: "请输入",
+      },
+      {
+        itemType: "number",
+        labelName: "联系人手机",
+        propName: "phone",
+        isRequired: true,
+        readonly: true,
+        placeholder: "请输入手机号",
+      },
+      {
+        itemType: "number",
+        labelName: "固定电话",
+        propName: "telephone",
+        isRequired: true,
+        readonly: true,
+        placeholder: "请输入固定电话",
+      },
+      {
+        itemType: "text",
+        labelName: "单位地址",
+        propName: "address",
+        isRequired: true,
+        readonly: true,
+        placeholder: "请输入",
+      },
+      {
+        itemType: "text",
+        labelName: "单位邮箱",
+        propName: "email",
+        isRequired: true,
+        readonly: true,
+        placeholder: "请输入",
+      },
+      {
+        itemType: "selectTwo", // 下拉框类型二，枚举值单选，在点击下拉选项时根据枚举id发请求，获取枚举值
+        labelName: "上级单位",
+        propName: "superior",
+        isRequired: true,
+        placeholder: "请选择",
+        readonly: true,
+        id: "456456456",
       },
   ]
 
-  export const tableData1 = [
-    //table值
+  export const tableData1 = [ //table值
     {
       id: 1,
       unitName: "鼓楼教育局",
@@ -59,8 +97,7 @@ export const formHeader = [
     },
   ]
 
-  export const columnList = [
-    //表头数据
+  export const columnList = [ //表头数据
     {
       prop: "unitName",
       label: "单位名称",
@@ -79,8 +116,7 @@ export const formHeader = [
     },
   ]
 
-  export const handleList = [
-    //操作栏数据
+  export const handleList = [ //操作栏数据
     {
       handleName: "查看单位信息",
       handleFlag: 1,

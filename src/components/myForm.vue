@@ -62,6 +62,77 @@
             <span slot="suffix">{{ item.unit }}</span>
           </el-input>
         </el-form-item>
+        <!-- 当类型为文本域输入框时 -->
+        <el-form-item
+          v-if="item.itemType == 'textarea'"
+          :key="index"
+          :label="item.labelName"
+          :prop="item.propName"
+          :rules="
+            item.isRequired
+              ? [
+                  {
+                    required: true, // 是否必填 是
+                    trigger: 'blur', // 触发方式，失去焦点
+                    itemType: 'textarea', // 当前类型，文本域输入框
+                    labelName: item.labelName, // 当前输入框的名字
+                    value: form[item.propName], // 输入框输入的绑定的值
+                    validator: validateEveryData, // 校验规则函数
+                  },
+                ]
+              : []
+          "
+        >
+          <el-input
+            type="textarea"
+            :placeholder="item.placeholder"
+            v-model.trim="form[item.propName]"
+            :readonly="item.readonly"
+
+            size="small"
+          ></el-input>
+        </el-form-item>
+        <!-- 当类型为下拉框二时，属于枚举值（单选）下拉框，需要根据枚举id发请求获取枚举值 -->
+        <el-form-item
+          v-if="item.itemType == 'selectTwo'"
+          :key="index"
+          :label="item.labelName"
+          :prop="item.propName"
+          :rules="
+            item.isRequired
+              ? [
+                  {
+                    required: true, // 是否必填 是
+                    trigger: '', // blur 或 change 这里就不指定触发方式了，保存提交时再校验
+                    itemType: 'selectTwo', // 当前类型，枚举值单选
+                    labelName: item.labelName, // 当前输入框的名字
+                    value: form[item.propName], // 输入框输入的绑定的值
+                    validator: validateEveryData, // 校验规则函数
+                  },
+                ]
+              : []
+          "
+        >
+          <el-select
+            v-model="form[item.propName]"
+            :placeholder="item.placeholder"
+            :disabled="item.readonly"
+            @visible-change="
+              (flag) => {
+                getOptionsArr(flag, item);
+              }
+            "
+            :loading="loadingSelect"
+            size="small"
+          >
+            <el-option
+              v-for="(ite, ind) in selectTwoOptionsObj[item.propName]"
+              :key="ind"
+              :label="ite.label"
+              :value="ite.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
       </template>
     </el-form>
   </div>
@@ -76,7 +147,7 @@ export default {
       default: () => {
         return [];
       },
-    }
+    },
   },
   components: {},
   data() {
@@ -151,7 +222,7 @@ export default {
   computed: {},
   watch: {},
   methods: {
-      // 数字类型加校验规则
+    // 数字类型加校验规则
     checkInput(item) {
       console.log("数字类型的再细分规则，可以根据item.labelName再写判断", item);
       if (item.labelName == "年龄") {
@@ -174,6 +245,9 @@ export default {
       if ("某个数字类型字段值") {
         // 加对应规则
       }
+    },
+    getOptionsArr(flag, item) {
+      console.log(flag, item);
     },
   },
   created() {},
