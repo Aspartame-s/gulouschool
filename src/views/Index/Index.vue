@@ -36,7 +36,6 @@
 <script>
 // import myitem from "./myitem.vue";
 // import { recursiveFunction } from "../../utils/recursive";
-import {getEduUnitList} from '@/api/education'
 export default {
   name: "Index",
   components: {
@@ -142,7 +141,7 @@ export default {
     this.breadCrumbList = matchedArr;
   },
   mounted() {
-      getEduUnitList()
+     
     // let arr = recursiveFunction("/education-department", this.menuList);
     // console.log(arr);
   },

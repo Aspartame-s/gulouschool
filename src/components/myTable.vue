@@ -8,7 +8,7 @@
       lazy
       stripe
       :load="load"
-      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+      :tree-props="{ hasChildren: 'hasSons' }"
     >
       <el-table-column type="selection" width="55" v-if="false">
       </el-table-column>
@@ -16,18 +16,26 @@
         :prop="item.prop"
         :label="item.label"
         width="auto"
+        min-width="120%"
         v-for="(item, index) in columnList"
         :key="index"
       >
       </el-table-column>
-      <el-table-column label="" v-for="item in handleList" :key="item.handleName">
+      <el-table-column
+        label=""
+        v-for="item in handleList"
+        :key="item.handleName"
+         width="auto"
+      >
         <template slot-scope="scope">
           <el-button
-            @click.native.prevent="deleteRow(scope.$index, tableData, item.handleFlag)"
+            @click.native.prevent="
+              deleteRow(scope.$index, tableData, item.handleFlag)
+            "
             type="text"
             size="small"
           >
-           {{item.handleName}}
+            {{ item.handleName }}
           </el-button>
         </template>
       </el-table-column>
@@ -36,6 +44,8 @@
 </template>
 
 <script>
+import { getEduUnitList } from "@/api/education";
+
 export default {
   props: {
     tableData: {
@@ -59,22 +69,28 @@ export default {
   watch: {},
   methods: {
     load(tree, treeNode, resolve) {
-      setTimeout(() => {
-        resolve([
-          {
-            id: 31,
-            date: "2016-05-01",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1519 弄",
-          },
-          {
-            id: 32,
-            date: "2016-05-01",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1519 弄",
-          },
-        ]);
-      }, 1000);
+      console.log(tree);
+      console.log(treeNode);
+      const pid = tree.id
+      getEduUnitList('', pid).then(res => {
+        resolve(res.data)
+      })
+      // setTimeout(() => {
+      //   resolve([
+      //     {
+      //       id: 31,
+      //       date: "2016-05-01",
+      //       name: "王小虎",
+      //       address: "上海市普陀区金沙江路 1519 弄",
+      //     },
+      //     {
+      //       id: 32,
+      //       date: "2016-05-01",
+      //       name: "王小虎",
+      //       address: "上海市普陀区金沙江路 1519 弄",
+      //     },
+      //   ]);
+      // }, 1000);
     },
     deleteRow(index, row) {
       console.log(row[index]);
@@ -107,7 +123,7 @@ export default {
     border: 1px solid red;
   }
   /deep/ .el-button--text {
-      color: #11B07A;
+    color: #11b07a;
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="item-container">
-    <div v-if="false">
+    <div v-if="true">
       <div class="handle-btn-container">
         <div class="add-unit yellow-btn">新建单位</div>
         <div class="freeze-unit yellow-btn">冻结单位</div>
@@ -28,9 +28,10 @@
 </template>
 
 <script>
-import myTable from "../../../../components/myTable.vue";
-import myForm from "../../../../components/myForm.vue";
-import {formHeader, tableData1, handleList, columnList} from './data'
+import myTable from "@/components/myTable.vue";
+import myForm from "@/components/myForm.vue";
+import { formHeader, tableData1, handleList, columnList } from "./data";
+import { getEduUnitList } from "@/api/education";
 export default {
   components: {
     myTable,
@@ -41,7 +42,7 @@ export default {
       tableData1,
       columnList,
       handleList,
-      formHeader
+      formHeader,
     };
   },
   computed: {},
@@ -79,9 +80,18 @@ export default {
     resetForm() {
       console.log("表单重置喽");
     },
+    //获取教育单位列表
+    getEduUnitList() {
+      getEduUnitList().then((res) => {
+        console.log(res);
+        this.tableData1 = res.data
+      });
+    },
   },
   created() {},
-  mounted() {},
+  mounted() {
+      this.getEduUnitList()
+  },
 };
 </script>
 <style lang='scss' scoped>

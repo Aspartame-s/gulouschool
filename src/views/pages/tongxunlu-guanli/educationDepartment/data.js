@@ -73,6 +73,7 @@ export const formHeader = [ //form 表头数据
       contact: "王小虎",
       contactPhone: "13344446666",
       email: "327137384@qq.com",
+      has: true
     },
     {
       id: 2,
@@ -99,7 +100,7 @@ export const formHeader = [ //form 表头数据
 
   export const columnList = [ //表头数据
     {
-      prop: "unitName",
+      prop: "name",
       label: "单位名称",
     },
     {
