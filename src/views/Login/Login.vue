@@ -126,7 +126,7 @@ export default {
       });
     },
     login() {
-        this.$router.push('/education-department')
+        this.$router.push('/address-management/education-department')
     }
   },
   created() {},

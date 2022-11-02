@@ -1,9 +1,25 @@
 const { postcss } = require('postcss-px2rem');
-
+const port = process.env.port || process.env.npm_config_port || 80 // 端口
+const path = require('path');
+function resolve(dir) {
+    return path.join(__dirname, dir);
+  }
 module.exports = {
     lintOnSave: false, // 当保存时不进行eslint的检查
     devServer:{
-        open:false//自动打开默认浏览器
+        port: port,
+        host: '0.0.0.0',
+        open:false, //自动打开默认浏览器
+        proxy: {
+            [process.env.VUE_APP_BASE_API]: {
+                target: `http://192.168.1.100:10002`,
+                changeOrigin: true,
+                pathRewrite: {
+                  ['^' + process.env.VUE_APP_BASE_API]: ''
+                }
+            }
+        },
+        disableHostCheck: true
     },
     css: {
         loaderOptions: {
@@ -23,5 +39,15 @@ module.exports = {
                 prependData: `@import "@/assets/styles/common.scss";`
             }
         }
-    }
+    },
+    chainWebpack: (config) => {
+        config.resolve.alias
+          .set('@', resolve('src'))
+          .set('@assets',resolve('src/assets'))
+          .set('@components',resolve('src/components'))
+          .set('@network',resolve('src/network'))
+          .set('@router',resolve('src/router'))
+          .set('@store',resolve('src/store'))
+          .set('@views',resolve('src/views'))
+      }
 }
