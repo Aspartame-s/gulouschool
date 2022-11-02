@@ -11,7 +11,7 @@
         :handleList="handleList"
       ></my-table>
     </div>
-    <div>
+    <div v-if="true">
       <div class="title">单位信息</div>
 
       <my-form
@@ -24,18 +24,23 @@
       <el-button @click="modify">编辑</el-button>
       <el-button @click="showData">数据回显</el-button>
     </div>
+    <div>
+        <my-tree></my-tree>
+    </div>
   </div>
 </template>
 
 <script>
 import myTable from "@/components/myTable.vue";
 import myForm from "@/components/myForm.vue";
+import myTree from "@/components/myTree.vue";
 import { formHeader, tableData1, handleList, columnList } from "./data";
 import { getEduUnitList } from "@/api/education";
 export default {
   components: {
     myTable,
     myForm,
+    myTree
   },
   data() {
     return {
