@@ -19,6 +19,7 @@
 
 .icon-zhanweifu:before {
   content: "\e626";
+  color: transparent;
 }
 
 .icon-wenjian:before {

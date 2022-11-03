@@ -9,9 +9,11 @@
         :tableData="tableData1"
         :columnList="columnList"
         :handleList="handleList"
+        @handleRow="handleRow(arguments)"
+        ref="myTable"
       ></my-table>
     </div>
-    <div v-if="true">
+    <div v-if="false">
       <div class="title">单位信息</div>
 
       <my-form
@@ -25,7 +27,10 @@
       <el-button @click="showData">数据回显</el-button>
     </div>
     <div>
-        <my-tree></my-tree>
+      <my-tree
+        :data="treeData"
+        @loadChildNode="loadChildNode(arguments)"
+      ></my-tree>
     </div>
   </div>
 </template>
@@ -36,18 +41,21 @@ import myForm from "@/components/myForm.vue";
 import myTree from "@/components/myTree.vue";
 import { formHeader, tableData1, handleList, columnList } from "./data";
 import { getEduUnitList } from "@/api/education";
+import { getAddressbookDeplList } from "@/api/addressbook";
 export default {
   components: {
     myTable,
     myForm,
-    myTree
+    myTree,
   },
   data() {
     return {
-      tableData1,
+      tableData1: [],
       columnList,
       handleList,
       formHeader,
+      eduUnitId: "",
+      treeData: [],
     };
   },
   computed: {},
@@ -89,13 +97,47 @@ export default {
     getEduUnitList() {
       getEduUnitList().then((res) => {
         console.log(res);
-        this.tableData1 = res.data
+        this.tableData1 = res.data;
+      });
+    },
+    //通讯录列表
+    getAddressbookDeplList(eduUnitId, id, pid) {
+      getAddressbookDeplList(eduUnitId, id, pid).then((res) => {
+        // console.log(res)
+        res.data.forEach((item) => {
+          this.$set(item, "isLeaf", !item.hasSons);
+        });
+        this.treeData = res.data;
+      });
+    },
+    //table 操作栏
+    handleRow(data) {
+      console.log(data);
+      const info = data[1];
+      const flag = data[2];
+      this.eduUnitId = info.id;
+      this.getAddressbookDeplList(this.eduUnitId, "", 0);
+    },
+    // //加载第一层节点
+    // async loadFirstNode(resolve) {
+    //   const res = await this.getAddressbookDeplList(this.eduUnitId, '', 0)
+    //   return resolve(res)
+    // },
+    //加载子节点
+    loadChildNode(arg) {
+      console.log(arg);
+      const resolve = arg[1];
+      getAddressbookDeplList(this.eduUnitId, "", arg[0].data.id).then((res) => {
+        res.data.forEach((item) => {
+          this.$set(item, "isLeaf", !item.hasSons);
+        });
+        resolve(res.data);
       });
     },
   },
   created() {},
   mounted() {
-      this.getEduUnitList()
+    this.getEduUnitList();
   },
 };
 </script>

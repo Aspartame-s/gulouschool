@@ -30,7 +30,7 @@
         <template slot-scope="scope">
           <el-button
             @click.native.prevent="
-              deleteRow(scope.$index, tableData, item.handleFlag)
+              handleRow(scope.$index, scope.row, item.handleFlag)
             "
             type="text"
             size="small"
@@ -68,12 +68,13 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    load(tree, treeNode, resolve) {
-      console.log(tree);
-      console.log(treeNode);
+     load(tree, treeNode, resolve) {
+      // console.log(tree);
+      // console.log(treeNode);
       const pid = tree.id
-      getEduUnitList('', pid).then(res => {
+       getEduUnitList('', pid).then(res => {
         resolve(res.data)
+        console.log(res)
       })
       // setTimeout(() => {
       //   resolve([
@@ -92,8 +93,14 @@ export default {
       //   ]);
       // }, 1000);
     },
-    deleteRow(index, row) {
-      console.log(row[index]);
+    handleRow(index, row, flag) {
+      // console.log(index);
+      // console.log(row);
+      // console.log(flag);
+      // if(flag == 2) {
+
+      // }
+      this.$emit('handleRow', index, row, flag)
     },
   },
   created() {},
