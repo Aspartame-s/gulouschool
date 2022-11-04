@@ -32,6 +32,7 @@
         @loadChildNode="loadChildNode(arguments)"
         @appendNode="appendNode(arguments)"
         @deleteNode="deleteNode"
+        @editNode="editNode(arguments)"
         :expandedKey="expandedKey"
       ></my-tree>
     </div>
@@ -48,6 +49,7 @@ import {
   getAddressbookDeplList,
   appendDept,
   deleteDept,
+  editDept,
 } from "@/api/addressbook";
 export default {
   components: {
@@ -63,7 +65,7 @@ export default {
       formHeader,
       eduUnitId: "",
       treeData: [],
-      expandedKey: '', //需要展开的id
+      expandedKey: "", //需要展开的id
     };
   },
   computed: {},
@@ -112,8 +114,8 @@ export default {
     getAddressbookDeplList(eduUnitId, id, pid, time) {
       getAddressbookDeplList(eduUnitId, id, pid).then((res) => {
         // console.log(res)
-        if(time == 'first') {
-          this.expandedKey = res.data[0].id
+        if (time == "first") {
+          this.expandedKey = res.data[0].id;
         }
         res.data.forEach((item) => {
           this.$set(item, "isLeaf", !item.hasSons);
@@ -127,7 +129,7 @@ export default {
       const info = data[1];
       const flag = data[2];
       this.eduUnitId = info.id;
-      this.getAddressbookDeplList(this.eduUnitId, "", 0, 'first');
+      this.getAddressbookDeplList(this.eduUnitId, "", 0, "first");
     },
     // //加载第一层节点
     // async loadFirstNode(resolve) {
@@ -157,6 +159,12 @@ export default {
         console.log(res);
       });
     },
+    //编辑部门 (接口)
+    editDept(data) {
+      editDept(data).then((res) => {
+        console.log(res);
+      });
+    },
     //新增部门(子组件方法)
     // async
     async appendNode(arg) {
@@ -166,15 +174,32 @@ export default {
         pid: arg[1].id,
       };
       await this.appendDept(data);
-      this.expandedKey = arg[1].id
+      this.expandedKey = arg[1].id;
       this.getAddressbookDeplList(this.eduUnitId, "", 0);
     },
 
     //删除部门(子组件方法)
     async deleteNode(arg) {
       await this.deleteDept(arg.id);
-      this.expandedKey = arg.pid
+      this.expandedKey = arg.pid;
       this.getAddressbookDeplList(this.eduUnitId, "", 0);
+    },
+
+    //编辑部门(子组件方法)
+    async editNode(arg) {
+      let data = arg[0]
+      let value = arg[1]
+      const data1 = {
+        eduUnitId: data.eduUnitId,
+        id: data.id,
+        name: value,
+        namePath: data.namePath,
+        pid: data.pid,
+      };
+      await this.editDept(data1)
+      this.expandedKey = data.pid;
+      this.getAddressbookDeplList(this.eduUnitId, "", 0);
+
     },
   },
   created() {},

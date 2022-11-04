@@ -30,3 +30,12 @@ export const deleteDept = (id) => {
         }
     })
 }
+
+//部门编辑
+export const editDept = (data) => {
+    return request({
+        url: '/addressbook-dept',
+        method: 'put',
+        data
+    })
+}

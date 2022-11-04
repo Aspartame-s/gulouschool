@@ -39,6 +39,9 @@
               <el-dropdown-item @click.native="deleteNode(data)"
                 >删除</el-dropdown-item
               >
+              <el-dropdown-item @click.native="editNode(data)"
+                >编辑</el-dropdown-item
+              >
             </el-dropdown-menu>
           </el-dropdown>
         </span>
@@ -84,7 +87,7 @@ export default {
         // console.log(this.defaultShowNodes)
         console.log(this.expandedKey);
         this.defaultShowNodes.push(this.expandedKey);
-        this.defaultShowNodes = this.unique(this.defaultShowNodes)
+        this.defaultShowNodes = this.unique(this.defaultShowNodes);
         console.log(this.defaultShowNodes);
       },
       deep: true,
@@ -99,8 +102,8 @@ export default {
     },
     appendNode(node, data) {
       // console.log(data);
-      let nodeFn = this.$refs.childtree;
-      this.$prompt("请输入部门名称", "提示", {
+      // let nodeFn = this.$refs.childtree;
+      this.$prompt("请输入部门名称", "新增", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         inputPattern: /\S/,
@@ -122,6 +125,28 @@ export default {
     },
     deleteNode(data) {
       this.$emit("deleteNode", data);
+    },
+    editNode(data) {
+      this.$prompt("请修改部门名称", "修改", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        inputPattern: /\S/,
+        inputErrorMessage: "名称不能为空",
+      })
+        .then(({ value }) => {
+          this.$message({
+            type: "success",
+            message: "新增成功",
+          });
+          this.$emit("editNode", data, value);
+
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "取消输入",
+          });
+        });
     },
     saveCurrentInp() {
       console.log(this.currentInput);
