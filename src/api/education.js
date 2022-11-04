@@ -4,6 +4,6 @@ import request from '@/utils/http'
 export const getEduUnitList = (id = '', pid = 0) => {
     return request({
         url: `/edu-unit?id=${id}&pid=${pid}`,
-        methods: 'get'
+        method: 'get'
     })
 }

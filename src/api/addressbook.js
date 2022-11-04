@@ -7,6 +7,26 @@ import request from '@/utils/http'
 export const getAddressbookDeplList = (eduUnitId, id, pid) => {
     return request({
         url: `/addressbook-dept?eduUnitId=${eduUnitId}&id=${id}&pid=${pid}`,
-        methods: 'get'
+        method: 'get'
+    })
+}
+
+//部门新增
+export const appendDept = (data) => {
+    return request({
+        url: '/addressbook-dept',
+        method: 'post',
+        data
+    })
+}
+
+//部门删除
+export const deleteDept = (id) => {
+    return request({
+        url: '/addressbook-dept',
+        method: 'delete',
+        params: {
+            id: id
+        }
     })
 }

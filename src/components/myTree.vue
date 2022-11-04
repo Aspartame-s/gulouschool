@@ -1,23 +1,44 @@
 <template>
   <div class="tree-container">
-    <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick" :expand-on-click-node="false" :load="loadNode" lazy>
+    <el-tree
+      :data="data"
+      :props="defaultProps"
+      @node-click="handleNodeClick"
+      :expand-on-click-node="false"
+      :default-expanded-keys="defaultShowNodes"
+      node-key="id"
+      :load="loadNode"
+      ref="childtree"
+      lazy
+    >
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <!-- 父级icon -->
-        <span
+        <!-- <span
           v-if="data.children"
           class="iconfont icon-wenjian icon-father"
-        ></span>
+        ></span> -->
         <!-- 子级icon -->
-        <span v-else class="iconfont icon-wenjian icon-child"></span>
-        <span>{{ node.label }}</span>
+        <span class="iconfont icon-wenjian icon-child"></span>
+        <span v-if="!data.isInput">{{ node.label }}</span>
+        <span v-else
+          ><el-input
+            v-model="currentInput"
+            placeholder="请输入分类名称"
+            @blur="saveCurrentInp"
+          ></el-input
+        ></span>
         <span class="iconfont icon-gengduo1" @click.stop>
           <el-dropdown trigger="click">
             <span class="el-dropdown-link" ref="echarType">
               <i class="iconfont icon-gengduo"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="seeTable(node)">详情</el-dropdown-item>
-              <el-dropdown-item>删除</el-dropdown-item>
+              <el-dropdown-item @click.native="appendNode(node, data)"
+                >新增部门</el-dropdown-item
+              >
+              <el-dropdown-item @click.native="deleteNode(data)"
+                >删除</el-dropdown-item
+              >
             </el-dropdown-menu>
           </el-dropdown>
         </span>
@@ -31,8 +52,12 @@ export default {
   props: {
     data: {
       type: Array,
-      default: []
-    }
+      default: [],
+    },
+    expandedKey: {
+      type: String,
+      default: "",
+    },
   },
   components: {},
   data() {
@@ -40,21 +65,69 @@ export default {
       defaultProps: {
         children: "children",
         label: "name",
-        isLeaf: 'isLeaf'
+        isLeaf: "isLeaf",
       },
+      currentInput: "",
+      defaultShowNodes: [],
     };
   },
   computed: {},
-  watch: {},
+  watch: {
+    data: {
+      handler() {
+        // 我这里默认展开一级, 指定几级就往里遍历几层取到 id 就可以了
+        // this.data.forEach(item => {
+        // 	this.defaultShowNodes.push(item.id)
+        //   console.log(item)
+        //   console.log(this.data)
+        // })
+        // console.log(this.defaultShowNodes)
+        console.log(this.expandedKey);
+        this.defaultShowNodes.push(this.expandedKey);
+        this.defaultShowNodes = this.unique(this.defaultShowNodes)
+        console.log(this.defaultShowNodes);
+      },
+      deep: true,
+    },
+  },
   methods: {
-    handleNodeClick(e) {
-      console.log(e);
+    unique(arr) {
+      return Array.from(new Set(arr));
     },
-    seeTable(node) {
-        console.log(node)
+    handleNodeClick(e, node) {
+      console.log(node);
     },
-     loadNode(node, resolve) {
-       console.log(node)
+    appendNode(node, data) {
+      // console.log(data);
+      let nodeFn = this.$refs.childtree;
+      this.$prompt("请输入部门名称", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        inputPattern: /\S/,
+        inputErrorMessage: "名称不能为空",
+      })
+        .then(({ value }) => {
+          this.$message({
+            type: "success",
+            message: "新增成功",
+          });
+          this.$emit("appendNode", node, data, value);
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "取消输入",
+          });
+        });
+    },
+    deleteNode(data) {
+      this.$emit("deleteNode", data);
+    },
+    saveCurrentInp() {
+      console.log(this.currentInput);
+    },
+    loadNode(node, resolve) {
+      console.log(node);
       // if (node.level == 0) {
       //   this.$emit('loadFirstNode', resolve)
       //   // this.loadFirstNode(resolve);
@@ -62,20 +135,20 @@ export default {
       //如果展开其他级节点，动态从后台加载下一级节点列表
       if (node.level >= 1) {
         // this.loadChildNode(node, resolve);
-         this.$emit('loadChildNode', node, resolve)
+        this.$emit("loadChildNode", node, resolve);
       }
 
-        // setTimeout(() => {
-        //   const data = [{
-        //     name: 'leaf',
-        //     leaf: true
-        //   }, {
-        //     name: 'zone'
-        //   }];
+      // setTimeout(() => {
+      //   const data = [{
+      //     name: 'leaf',
+      //     leaf: true
+      //   }, {
+      //     name: 'zone'
+      //   }];
 
-        //   resolve(data);
-        // }, 500);
-      }
+      //   resolve(data);
+      // }, 500);
+    },
   },
   created() {},
   mounted() {},
@@ -100,15 +173,20 @@ export default {
     font-size: 14px;
     margin-bottom: 8px;
     &:last-child {
-        margin-bottom: 0;
+      margin-bottom: 0;
     }
   }
   /deep/ .el-tree-node {
-      margin-bottom: 4px;
+    margin-bottom: 4px;
   }
 }
 .icon-wenjian {
   color: #11b07a;
   margin-right: 6px;
+}
+/deep/ .el-input__inner {
+  height: 20px;
+  width: 85%;
+  padding: 0 2px;
 }
 </style>
