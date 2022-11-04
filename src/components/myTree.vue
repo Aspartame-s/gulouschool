@@ -132,11 +132,12 @@ export default {
         cancelButtonText: "取消",
         inputPattern: /\S/,
         inputErrorMessage: "名称不能为空",
+        inputValue: data.name
       })
         .then(({ value }) => {
           this.$message({
             type: "success",
-            message: "新增成功",
+            message: "修改成功",
           });
           this.$emit("editNode", data, value);
 

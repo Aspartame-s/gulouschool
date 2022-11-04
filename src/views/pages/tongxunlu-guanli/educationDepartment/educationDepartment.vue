@@ -1,6 +1,6 @@
 <template>
   <div class="item-container">
-    <div v-if="true">
+    <div v-if="false">
       <div class="handle-btn-container">
         <div class="add-unit yellow-btn">新建单位</div>
         <div class="freeze-unit yellow-btn">冻结单位</div>
@@ -26,8 +26,9 @@
       <el-button @click="modify">编辑</el-button>
       <el-button @click="showData">数据回显</el-button>
     </div>
-    <div>
-      <my-tree
+    <div class="tree-area">
+      <div style="width: 200px; min-height: 100%; border-right: 1px solid #C9F0E1; margin-right: 28px">
+         <my-tree
         :data="treeData"
         @loadChildNode="loadChildNode(arguments)"
         @appendNode="appendNode(arguments)"
@@ -35,6 +36,15 @@
         @editNode="editNode(arguments)"
         :expandedKey="expandedKey"
       ></my-tree>
+      </div>
+     <div style="flex-grow: 1">
+       <my-table
+        :tableData="tableData1"
+        :columnList="columnList"
+        :handleList="handleList"
+      ></my-table>
+     </div>
+      
     </div>
   </div>
 </template>
@@ -220,5 +230,11 @@ export default {
   height: auto;
   display: flex;
   justify-content: center;
+}
+.tree-area {
+  width: 100%;
+  height: 100%;
+  // background-color: pink;
+  display: flex;
 }
 </style>

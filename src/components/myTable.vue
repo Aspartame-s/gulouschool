@@ -13,6 +13,7 @@
       <el-table-column type="selection" width="55" v-if="false">
       </el-table-column>
       <el-table-column
+      show-overflow-tooltip
         :prop="item.prop"
         :label="item.label"
         width="auto"
