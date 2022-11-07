@@ -25,7 +25,7 @@
       </div>
       <div class="bread-crumb-container">
         <bread-crumb :data="breadCrumbList" style="margin-bottom: 6px"></bread-crumb>
-        <div class="current-breadcrumb">单位管理</div>
+        <div class="current-breadcrumb">{{breadCrumb}}</div>
         <div class="current-line"></div>
       </div>
       <router-view style="flex-grow: 1"></router-view>
@@ -36,6 +36,7 @@
 <script>
 // import myitem from "./myitem.vue";
 // import { recursiveFunction } from "../../utils/recursive";
+import { mapState } from 'vuex';
 export default {
   name: "Index",
   components: {
@@ -114,7 +115,9 @@ export default {
       breadCrumbList: [],
     };
   },
-  computed: {},
+  computed: {
+    ...mapState(['breadCrumb']),
+  },
   watch: {
     $route(e) {
       let matchedArr = e.matched;
@@ -141,7 +144,7 @@ export default {
     this.breadCrumbList = matchedArr;
   },
   mounted() {
-     
+    console.log(this.breadCrumb)
     // let arr = recursiveFunction("/education-department", this.menuList);
     // console.log(arr);
   },

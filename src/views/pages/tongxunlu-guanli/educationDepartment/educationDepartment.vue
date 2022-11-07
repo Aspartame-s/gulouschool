@@ -1,6 +1,6 @@
 <template>
   <div class="item-container">
-    <div v-if="false">
+    <div v-if="unitManageSHow">
       <div class="handle-btn-container">
         <div class="add-unit yellow-btn">新建单位</div>
         <div class="freeze-unit yellow-btn">冻结单位</div>
@@ -13,7 +13,7 @@
         ref="myTable"
       ></my-table>
     </div>
-    <div v-if="false">
+    <div v-if="unitInfoShow">
       <div class="title">单位信息</div>
 
       <my-form
@@ -26,25 +26,40 @@
       <el-button @click="modify">编辑</el-button>
       <el-button @click="showData">数据回显</el-button>
     </div>
-    <div class="tree-area">
-      <div style="width: 200px; min-height: 100%; border-right: 1px solid #C9F0E1; margin-right: 28px">
-         <my-tree
-        :data="treeData"
-        @loadChildNode="loadChildNode(arguments)"
-        @appendNode="appendNode(arguments)"
-        @deleteNode="deleteNode"
-        @editNode="editNode(arguments)"
-        :expandedKey="expandedKey"
-      ></my-tree>
+    <div class="tree-area" v-if="addressbookShow">
+      <div
+        style="
+          width: 200px;
+          min-height: 100%;
+          border-right: 1px solid #c9f0e1;
+          margin-right: 28px;
+        "
+      >
+        <my-tree
+          :data="treeData"
+          @loadChildNode="loadChildNode(arguments)"
+          @appendNode="appendNode(arguments)"
+          @deleteNode="deleteNode"
+          @editNode="editNode(arguments)"
+          :expandedKey="expandedKey"
+        ></my-tree>
       </div>
-     <div style="flex-grow: 1">
-       <my-table
-        :tableData="tableData1"
-        :columnList="columnList"
-        :handleList="handleList"
-      ></my-table>
-     </div>
-      
+      <div style="flex-grow: 1">
+        <div class="handle-container">
+          <div
+            :class="['btn', item.color]"
+            v-for="item in handleBtnList"
+            :key="item.id"
+          >
+            {{ item.name }}
+          </div>
+        </div>
+        <my-table
+          :tableData="tableData1"
+          :columnList="columnList"
+          :handleList="handleList"
+        ></my-table>
+      </div>
     </div>
   </div>
 </template>
@@ -76,6 +91,36 @@ export default {
       eduUnitId: "",
       treeData: [],
       expandedKey: "", //需要展开的id
+      handleBtnList: [
+        {
+          id: 1,
+          name: "添加成员",
+          color: "yellow-btn",
+        },
+        {
+          id: 2,
+          name: "批量移动",
+          color: "yellow-btn",
+        },
+        {
+          id: 3,
+          name: "批量导入",
+          color: "yellow-btn",
+        },
+        {
+          id: 4,
+          name: "批量导出",
+          color: "yellow-btn",
+        },
+        {
+          id: 5,
+          name: "删除",
+          color: "red-btn",
+        },
+      ],
+      unitManageSHow: true,
+      unitInfoShow: false,
+      addressbookShow: false,
     };
   },
   computed: {},
@@ -135,11 +180,28 @@ export default {
     },
     //table 操作栏
     handleRow(data) {
-      console.log(data);
       const info = data[1];
-      const flag = data[2];
       this.eduUnitId = info.id;
-      this.getAddressbookDeplList(this.eduUnitId, "", 0, "first");
+      const handleFlag = data[2]; // 1 查看单位信息 2 查看通讯录 3 编辑
+      switch (handleFlag) {
+        case 1:
+          this.unitManageSHow = false;
+          this.unitInfoShow = true;
+          this.addressbookShow = false;
+          break;
+        case 2:
+          this.getAddressbookDeplList(this.eduUnitId, "", 0, "first");
+          this.unitManageSHow = false;
+          this.unitInfoShow = false;
+          this.addressbookShow = true;
+          break;
+        case 3:
+          this.unitManageSHow = false;
+          this.unitInfoShow = true;
+          this.addressbookShow = false;
+          break;
+      }
+      console.log(data);
     },
     // //加载第一层节点
     // async loadFirstNode(resolve) {
@@ -197,8 +259,8 @@ export default {
 
     //编辑部门(子组件方法)
     async editNode(arg) {
-      let data = arg[0]
-      let value = arg[1]
+      let data = arg[0];
+      let value = arg[1];
       const data1 = {
         eduUnitId: data.eduUnitId,
         id: data.id,
@@ -206,10 +268,9 @@ export default {
         namePath: data.namePath,
         pid: data.pid,
       };
-      await this.editDept(data1)
+      await this.editDept(data1);
       this.expandedKey = data.pid;
       this.getAddressbookDeplList(this.eduUnitId, "", 0);
-
     },
   },
   created() {},
@@ -236,5 +297,15 @@ export default {
   height: 100%;
   // background-color: pink;
   display: flex;
+  .handle-container {
+    width: 100%;
+    height: 28px;
+    // background-color: blue;
+    margin-bottom: 24px;
+    display: flex;
+    .btn {
+      margin-right: 24px;
+    }
+  }
 }
 </style>
