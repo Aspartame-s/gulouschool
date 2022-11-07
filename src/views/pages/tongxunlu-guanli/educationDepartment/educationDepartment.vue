@@ -121,10 +121,20 @@ export default {
       unitManageSHow: true,
       unitInfoShow: false,
       addressbookShow: false,
+      infoForm: {},
     };
   },
   computed: {},
-  watch: {},
+  watch: {
+    $route(e) {
+      console.log(e);
+      if (e.path == "/address-management/education-department") {
+        this.unitManageSHow = true;
+        this.unitInfoShow = false;
+        this.addressbookShow = false;
+      }
+    },
+  },
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -140,7 +150,6 @@ export default {
       this.$refs[formName].resetFields();
     },
     modify() {
-      console.log(123);
       this.formHeader.forEach((item) => {
         item.readonly = false;
       });
@@ -181,6 +190,8 @@ export default {
     //table 操作栏
     handleRow(data) {
       const info = data[1];
+      console.log(info);
+      // this.infoForm = info
       this.eduUnitId = info.id;
       const handleFlag = data[2]; // 1 查看单位信息 2 查看通讯录 3 编辑
       switch (handleFlag) {
@@ -199,6 +210,10 @@ export default {
           this.unitManageSHow = false;
           this.unitInfoShow = true;
           this.addressbookShow = false;
+          this.$nextTick(() => {
+            // console.log(this.$refs.myForm);
+            this.$refs.myForm.form = info;
+          });
           break;
       }
       console.log(data);

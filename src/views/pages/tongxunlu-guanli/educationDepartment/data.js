@@ -10,7 +10,7 @@ export const formHeader = [ //form 表头数据
     {
         itemType: "number",
         labelName: "统一社会信用码",
-        propName: "code",
+        propName: "unifiedSocialCreditCode",
         isRequired: true,
         readonly: true,
         placeholder: "请输入",
@@ -26,7 +26,7 @@ export const formHeader = [ //form 表头数据
       {
         itemType: "number",
         labelName: "联系人手机",
-        propName: "phone",
+        propName: "contactPhone",
         isRequired: true,
         readonly: true,
         placeholder: "请输入手机号",
@@ -34,7 +34,7 @@ export const formHeader = [ //form 表头数据
       {
         itemType: "number",
         labelName: "固定电话",
-        propName: "telephone",
+        propName: "fixedPhone",
         isRequired: true,
         readonly: true,
         placeholder: "请输入固定电话",
