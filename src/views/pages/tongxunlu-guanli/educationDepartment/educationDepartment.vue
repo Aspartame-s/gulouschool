@@ -199,6 +199,12 @@ export default {
           this.unitManageSHow = false;
           this.unitInfoShow = true;
           this.addressbookShow = false;
+          this.formHeader.forEach((item) => { //控制每项只读
+            item.readonly = true;
+          });
+          this.$nextTick(() => {
+            this.$refs.myForm.form = info;
+          });
           break;
         case 2:
           this.getAddressbookDeplList(this.eduUnitId, "", 0, "first");
@@ -210,8 +216,10 @@ export default {
           this.unitManageSHow = false;
           this.unitInfoShow = true;
           this.addressbookShow = false;
+          this.formHeader.forEach((item) => { //控制每项可编辑
+            item.readonly = false;
+          });
           this.$nextTick(() => {
-            // console.log(this.$refs.myForm);
             this.$refs.myForm.form = info;
           });
           break;
@@ -227,12 +235,16 @@ export default {
     loadChildNode(arg) {
       console.log(arg);
       const resolve = arg[1];
-      getAddressbookDeplList(this.eduUnitId, "", arg[0].data.id).then((res) => {
+      setTimeout(() => {
+        getAddressbookDeplList(this.eduUnitId, "", arg[0].data.id).then((res) => {
+        console.log('执行了')
         res.data.forEach((item) => {
           this.$set(item, "isLeaf", !item.hasSons);
         });
         resolve(res.data);
       });
+      }, 500); // settimeout 控制 加载节点速度，防止已编辑节点后 节点刷新过慢，加载还是编辑前节点
+      
     },
     //新增部门 (接口)
     appendDept(data) {
