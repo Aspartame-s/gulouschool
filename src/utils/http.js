@@ -33,14 +33,17 @@ service.interceptors.response.use(response => {
     // console.log(response)
     //获取状态码
     const { status } = response
-    // 获取错误信息
+    const { code } = response.data
     const msg = response.data.msg
+    // 获取错误信息
     if (status == 200) {
         return response.data;
-    }else {
+    } else {
         return Promise.reject(new Error(msg))
     }
+    // if(code)
 }, error => {
+    // console.log(error)
     if (error && error.response) {
         return Promise.reject(error)
     }

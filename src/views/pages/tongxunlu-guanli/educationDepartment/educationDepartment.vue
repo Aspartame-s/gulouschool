@@ -23,18 +23,14 @@
         @resetForm="resetForm"
       >
       </my-form>
-      <el-button @click="modify">编辑</el-button>
-      <el-button @click="showData">数据回显</el-button>
+      <div class="btn-container">
+        <div class="btn back" @click="showUnitManage">返回</div>
+        <div class="btn edit" @click="modify">编辑</div>
+        <div class="btn submit">提交</div>
+      </div>
     </div>
     <div class="tree-area" v-if="addressbookShow">
-      <div
-        style="
-          width: 200px;
-          min-height: 100%;
-          border-right: 1px solid #c9f0e1;
-          margin-right: 28px;
-        "
-      >
+      <div class="tree-box">
         <my-tree
           :data="treeData"
           @loadChildNode="loadChildNode(arguments)"
@@ -154,12 +150,10 @@ export default {
         item.readonly = false;
       });
     },
-    showData() {
-      let form = {
-        name: "jth",
-        age: 18,
-      };
-      this.$refs.myForm.form = form;
+    showUnitManage() {
+      this.unitManageSHow = true;
+      this.unitInfoShow = false;
+      this.addressbookShow = false;
     },
     submitForm(form) {
       console.log("表单提交喽", form);
@@ -170,8 +164,12 @@ export default {
     //获取教育单位列表
     getEduUnitList() {
       getEduUnitList().then((res) => {
-        console.log(res);
+        // console.log(res);
         this.tableData1 = res.data;
+        this.tableData1.forEach(item => {
+          this.$set(item, 'type', 0)
+        })
+        console.log(this.tableData1)
       });
     },
     //通讯录列表
@@ -199,7 +197,8 @@ export default {
           this.unitManageSHow = false;
           this.unitInfoShow = true;
           this.addressbookShow = false;
-          this.formHeader.forEach((item) => { //控制每项只读
+          this.formHeader.forEach((item) => {
+            //控制每项只读
             item.readonly = true;
           });
           this.$nextTick(() => {
@@ -216,7 +215,8 @@ export default {
           this.unitManageSHow = false;
           this.unitInfoShow = true;
           this.addressbookShow = false;
-          this.formHeader.forEach((item) => { //控制每项可编辑
+          this.formHeader.forEach((item) => {
+            //控制每项可编辑
             item.readonly = false;
           });
           this.$nextTick(() => {
@@ -236,15 +236,16 @@ export default {
       console.log(arg);
       const resolve = arg[1];
       setTimeout(() => {
-        getAddressbookDeplList(this.eduUnitId, "", arg[0].data.id).then((res) => {
-        console.log('执行了')
-        res.data.forEach((item) => {
-          this.$set(item, "isLeaf", !item.hasSons);
-        });
-        resolve(res.data);
-      });
+        getAddressbookDeplList(this.eduUnitId, "", arg[0].data.id).then(
+          (res) => {
+            console.log("执行了");
+            res.data.forEach((item) => {
+              this.$set(item, "isLeaf", !item.hasSons);
+            });
+            resolve(res.data);
+          }
+        );
       }, 500); // settimeout 控制 加载节点速度，防止已编辑节点后 节点刷新过慢，加载还是编辑前节点
-      
     },
     //新增部门 (接口)
     appendDept(data) {
@@ -256,6 +257,13 @@ export default {
     deleteDept(id) {
       deleteDept(id).then((res) => {
         console.log(res);
+        const msg = res.msg;
+        if (res.code == 500) {
+          this.$message({
+            message: msg,
+            type: "warning",
+          });
+        }
       });
     },
     //编辑部门 (接口)
@@ -324,6 +332,12 @@ export default {
   height: 100%;
   // background-color: pink;
   display: flex;
+  .tree-box {
+    width: 210px;
+    min-height: 100%;
+    border-right: 1px solid #c9f0e1;
+    margin-right: 28px;
+  }
   .handle-container {
     width: 100%;
     height: 28px;
@@ -333,6 +347,31 @@ export default {
     .btn {
       margin-right: 24px;
     }
+  }
+}
+.btn-container {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  &:last-child {
+    margin-right: 0;
+  }
+  .btn {
+    width: 120px;
+    height: 40px;
+    border-radius: 4px;
+    @include center;
+    font-size: 16px;
+    margin-right: 44px;
+  }
+  .back {
+    background-color: #11b07a;
+    color: #fff;
+  }
+  .edit,
+  .submit {
+    border: 1px solid #666666;
   }
 }
 </style>

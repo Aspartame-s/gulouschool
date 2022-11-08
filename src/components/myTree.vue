@@ -184,7 +184,7 @@ export default {
 .tree-container {
   width: 192px;
   .custom-tree-node {
-    width: 100%;
+    width: 192px;
     display: flex;
     align-items: center;
     position: relative;
