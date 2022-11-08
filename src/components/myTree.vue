@@ -97,8 +97,9 @@ export default {
     unique(arr) {
       return Array.from(new Set(arr));
     },
-    handleNodeClick(e, node) {
-      console.log(node);
+    handleNodeClick(e, node) { //点击部门 搜索该部门（包含子部门下的员工）
+      // console.log(node);
+      this.$emit("getAccurateEmployeeList", node.data.id)
     },
     appendNode(node, data) {
       // console.log(data);

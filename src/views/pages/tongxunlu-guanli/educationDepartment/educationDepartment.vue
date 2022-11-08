@@ -37,6 +37,7 @@
           @appendNode="appendNode(arguments)"
           @deleteNode="deleteNode"
           @editNode="editNode(arguments)"
+          @getAccurateEmployeeList="getAccurateEmployeeList"
           :expandedKey="expandedKey"
         ></my-tree>
       </div>
@@ -46,14 +47,17 @@
             :class="['btn', item.color]"
             v-for="item in handleBtnList"
             :key="item.id"
+            @click="btnHandle(item.id)"
           >
             {{ item.name }}
           </div>
         </div>
         <my-table
-          :tableData="tableData1"
-          :columnList="columnList"
-          :handleList="handleList"
+          :tableData="employeeTableData"
+          :columnList="employeeColumnList"
+          :handleList="employeeHandleList"
+          ref="parentTable"
+          id="table"
         ></my-table>
       </div>
     </div>
@@ -64,7 +68,14 @@
 import myTable from "@/components/myTable.vue";
 import myForm from "@/components/myForm.vue";
 import myTree from "@/components/myTree.vue";
-import { formHeader, tableData1, handleList, columnList } from "./data";
+import {
+  formHeader,
+  tableData1,
+  handleList,
+  columnList,
+  employeeColumnList,
+  employeeHandleList,
+} from "./data";
 import { getEduUnitList } from "@/api/education";
 import {
   getAddressbookDeplList,
@@ -72,6 +83,9 @@ import {
   deleteDept,
   editDept,
 } from "@/api/addressbook";
+import { getAllEmployeeList } from "@/api/employee";
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 export default {
   components: {
     myTable,
@@ -86,7 +100,7 @@ export default {
       formHeader,
       eduUnitId: "",
       treeData: [],
-      expandedKey: "", //需要展开的id
+      expandedKey: "", //需要展开的id && 部门id
       handleBtnList: [
         {
           id: 1,
@@ -118,6 +132,10 @@ export default {
       unitInfoShow: false,
       addressbookShow: false,
       infoForm: {},
+      deptId: "", //部门id 根据部门id查询员工(包含子部门)
+      employeeColumnList, //人员表头
+      employeeHandleList, //人员操作栏
+      employeeTableData: [], //人员表格数据
     };
   },
   computed: {},
@@ -166,16 +184,16 @@ export default {
       getEduUnitList().then((res) => {
         // console.log(res);
         this.tableData1 = res.data;
-        this.tableData1.forEach(item => {
-          this.$set(item, 'type', 0)
-        })
-        console.log(this.tableData1)
+        this.tableData1.forEach((item) => {
+          this.$set(item, "type", 0);
+        });
+        console.log(this.tableData1);
       });
     },
     //通讯录列表
     getAddressbookDeplList(eduUnitId, id, pid, time) {
       getAddressbookDeplList(eduUnitId, id, pid).then((res) => {
-        // console.log(res)
+        console.log(res);
         if (time == "first") {
           this.expandedKey = res.data[0].id;
         }
@@ -183,6 +201,7 @@ export default {
           this.$set(item, "isLeaf", !item.hasSons);
         });
         this.treeData = res.data;
+        this.getAllEmployeeList(res.data[0].id);
       });
     },
     //table 操作栏
@@ -306,6 +325,78 @@ export default {
       await this.editDept(data1);
       this.expandedKey = data.pid;
       this.getAddressbookDeplList(this.eduUnitId, "", 0);
+    },
+
+    //人员
+    //根据部门id查询员工(包含子部门)
+    getAllEmployeeList(id) {
+      getAllEmployeeList(id).then((res) => {
+        let employeeList = res.data;
+        //给每个item 添加一个自定义字段, 将多个部门拼接
+        employeeList.forEach((item) => {
+          let deptList = item.addrbookDepts;
+          var dept = "";
+          deptList.forEach((self) => {
+            if (self) {
+              dept = dept + self.name + ";";
+            }
+          });
+          this.$set(item, "dept", dept);
+        });
+        // console.log(res)
+        this.employeeTableData = employeeList;
+      });
+    },
+    //点击部门 搜索该部门（包含子部门下的员工）
+    getAccurateEmployeeList(id) {
+      this.getAllEmployeeList(id);
+    },
+    //table 顶部颜色按钮操作
+    btnHandle(id) {
+      // 1添加成员 2批量移动 3批量导入 4批量导出 5删除
+      switch (id) {
+        case 1:
+          console.log("添加成员");
+          break;
+        case 2:
+          console.log("批量移动");
+          break;
+        case 3:
+          console.log("批量导入");
+          break;
+        case 4:
+          // console.log("批量导出");
+          // console.log(this.$refs.parentTable.$children[0].$el.id)
+          // const eleId = this.$refs.parentTable.$children[0].$el.id;
+          // console.log(document.querySelector('table'))
+          let wb = XLSX.utils.table_to_book(
+            document.querySelector("#table")
+          );
+          /* 获取二进制字符串作为输出 */
+          var wbout = XLSX.write(wb, {
+            bookType: "xlsx",
+            bookSST: true,
+            type: "array",
+          });
+          try {
+            FileSaver.saveAs(
+              //Blob 对象表示一个不可变、原始数据的类文件对象。
+              //Blob 表示的不一定是JavaScript原生格式的数据。
+              //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+              //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+              new Blob([wbout], { type: "application/octet-stream" }),
+              //设置导出文件名称
+              "sheetjs.xlsx"
+            );
+          } catch (e) {
+            if (typeof console !== "undefined") console.log(e, wbout);
+          }
+          return wbout;
+          break;
+        case 5:
+          console.log("删除");
+          break;
+      }
     },
   },
   created() {},

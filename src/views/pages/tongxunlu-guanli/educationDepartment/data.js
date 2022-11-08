@@ -117,6 +117,29 @@ export const formHeader = [ //form 表头数据
     },
   ]
 
+  export const employeeColumnList = [
+    {
+      prop: 'employeeName',
+      label: '姓名',
+    },
+    {
+      prop: 'position',
+      label: '职务',
+    },
+    {
+      prop: 'dept',
+      label: '部门',
+    },
+    {
+      prop: 'phone',
+      label: '手机号',
+    },
+    {
+      prop: 'email',
+      label: '邮箱',
+    }
+  ]
+
   export const handleList = [ //操作栏数据
     {
       handleName: "查看单位信息",
@@ -130,4 +153,15 @@ export const formHeader = [ //form 表头数据
       handleName: "编辑",
       handleFlag: 3,
     },
+  ]
+
+  export const employeeHandleList = [ //员工操作栏数据
+    {
+      handleName: "编辑",
+      handleFlag: 4,
+    },
+    {
+      handleName: "删除",
+      handleFlag: 5,
+    }
   ]
