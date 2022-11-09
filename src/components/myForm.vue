@@ -88,10 +88,50 @@
             :placeholder="item.placeholder"
             v-model.trim="form[item.propName]"
             :readonly="item.readonly"
-
             size="small"
           ></el-input>
         </el-form-item>
+
+        <!-- 当类型为模糊搜索input时 -->
+        <el-form-item
+          v-if="item.itemType == 'search'"
+          :key="index"
+          :label="item.labelName"
+          :prop="item.propName"
+          :rules="
+            item.isRequired
+              ? [
+                  {
+                    required: true, // 是否必填 是
+                    trigger: 'blur', // 触发方式，失去焦点
+                    itemType: 'number', // 当前类型，文字输入框
+                    labelName: item.labelName, // 当前输入框的名字
+                    value: form[item.propName], // 输入框输入的绑定的值
+                    validator: validateEveryData, // 校验规则函数
+                  },
+                ]
+              : []
+          "
+        >
+          <!-- <el-input
+            :placeholder="item.placeholder"
+            v-model.trim="form[item.propName]"
+            @change="checkInput(item)"
+            size="small"
+            :readonly="item.readonly"
+          >
+            <span slot="suffix">{{ item.unit }}</span>
+          </el-input> -->
+          <el-autocomplete
+            class="inline-input"
+            v-model.trim="form[item.propName]"
+            :fetch-suggestions="querySearch"
+            :placeholder="item.placeholder"
+            :trigger-on-focus="false"
+            @select="handleSelect"
+          ></el-autocomplete>
+        </el-form-item>
+
         <!-- 当类型为下拉框二时，属于枚举值（单选）下拉框，需要根据枚举id发请求获取枚举值 -->
         <el-form-item
           v-if="item.itemType == 'selectTwo'"
@@ -135,10 +175,16 @@
         </el-form-item>
       </template>
     </el-form>
+    <div class="btn-container">
+      <div class="btn back" @click="showUnitManage">返回</div>
+      <div class="btn edit" @click="modify">编辑</div>
+      <div class="btn submit" @click="submit">提交</div>
+    </div>
   </div>
 </template>
 
 <script>
+import { getEduUnitList } from "@/api/education";
 export default {
   props: {
     // 父组件传递过来的表头的数据
@@ -203,6 +249,9 @@ export default {
         case "dateRange":
           callback(new Error("请选择" + rule.labelName + "范围")); // 下拉框类型三 多选数组得填写
           break;
+        case "search":
+          callback(new Error(rule.labelName + "不能为空"));
+          break;
 
         default:
           break;
@@ -217,6 +266,8 @@ export default {
       form: {},
       // 校验规则
       validateEveryData: validateEveryData,
+      pid: "",
+      handleFlag: "modify",
     };
   },
   computed: {},
@@ -249,6 +300,56 @@ export default {
     getOptionsArr(flag, item) {
       console.log(flag, item);
     },
+    showUnitManage() {
+      //返回按钮
+      this.$emit("showUnitManage");
+      console.log(this.form);
+    },
+    modify() {
+      this.handleFlag = "modify";
+      this.$emit("modify");
+    },
+    submit() {
+      // 提交按钮
+      let form2 = Object.assign({}, this.form);
+      if (this.pid) {
+        form2.pid = this.pid;
+      }
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          this.$emit("submit", form2, this.handleFlag);
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+
+    //模糊搜索
+    async querySearch(queryString, cb) {
+      const arr = await this.getEduUnitList("", "", queryString);
+      arr.forEach((item) => {
+        item = Object.assign(item, { value: item.name });
+      });
+      console.log(arr);
+      cb(arr);
+    },
+
+    //选择搜索项
+    handleSelect(item) {
+      // console.log(item);
+      this.pid = item.id;
+      // console.log(form)
+    },
+
+    //搜索上级单位
+    getEduUnitList(id, pid, query) {
+      return new Promise(function (resolve, reject) {
+        getEduUnitList(id, pid, query).then((res) => {
+          resolve(res.data);
+        });
+      });
+    },
   },
   created() {},
   mounted() {},
@@ -257,5 +358,35 @@ export default {
 <style lang='scss' scoped>
 .form-container {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .btn-container {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    &:last-child {
+      margin-right: 0;
+    }
+    .btn {
+      width: 120px;
+      height: 40px;
+      border-radius: 4px;
+      @include center;
+      font-size: 16px;
+      margin-right: 44px;
+      cursor: pointer;
+    }
+    .back {
+      background-color: #11b07a;
+      color: #fff;
+    }
+    .edit,
+    .submit {
+      border: 1px solid #666666;
+    }
+  }
 }
 </style>

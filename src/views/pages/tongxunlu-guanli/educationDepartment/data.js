@@ -55,14 +55,22 @@ export const formHeader = [ //form 表头数据
         readonly: true,
         placeholder: "请输入",
       },
+      // {
+      //   itemType: "selectTwo", // 下拉框类型二，枚举值单选，在点击下拉选项时根据枚举id发请求，获取枚举值
+      //   labelName: "上级单位",
+      //   propName: "pid",
+      //   isRequired: true,
+      //   placeholder: "请选择",
+      //   readonly: true,
+      //   id: "456456456",
+      // },
       {
-        itemType: "selectTwo", // 下拉框类型二，枚举值单选，在点击下拉选项时根据枚举id发请求，获取枚举值
+        itemType: "search", // 下拉框类型二，枚举值单选，在点击下拉选项时根据枚举id发请求，获取枚举值
         labelName: "上级单位",
-        propName: "pid",
+        propName: "parentName",
         isRequired: true,
-        placeholder: "请选择",
-        readonly: true,
-        id: "456456456",
+        placeholder: "请输入上级单位",
+        readonly: true
       },
   ]
 

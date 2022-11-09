@@ -1,9 +1,9 @@
 import request from '@/utils/http'
 
 //获取教育单位列表
-export const getEduUnitList = (id = '', pid = 0) => {
+export const getEduUnitList = (id = '', pid = 0, query = '') => {
     return request({
-        url: `/edu-unit?id=${id}&pid=${pid}`,
+        url: `/edu-unit?id=${id}&pid=${pid}&queryName=${query}`,
         method: 'get'
     })
 }

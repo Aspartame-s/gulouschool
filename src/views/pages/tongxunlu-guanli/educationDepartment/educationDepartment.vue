@@ -2,7 +2,7 @@
   <div class="item-container">
     <div v-if="unitManageSHow">
       <div class="handle-btn-container">
-        <div class="add-unit yellow-btn">新建单位</div>
+        <div class="add-unit yellow-btn" @click="addNewUnit">新建单位</div>
         <!-- <div class="freeze-unit yellow-btn">冻结单位</div> -->
       </div>
       <my-table
@@ -21,13 +21,16 @@
         :formHeader="formHeader"
         @submitForm="submitForm"
         @resetForm="resetForm"
+        @showUnitManage="showUnitManage"
+        @submit="submit(arguments)"
+        @modify="modify"
       >
       </my-form>
-      <div class="btn-container">
+      <!-- <div class="btn-container">
         <div class="btn back" @click="showUnitManage">返回</div>
         <div class="btn edit" @click="modify">编辑</div>
-        <div class="btn submit">提交</div>
-      </div>
+        <div class="btn submit" @click="submit">提交</div>
+      </div> -->
     </div>
     <div class="tree-area" v-if="addressbookShow">
       <div class="tree-box">
@@ -80,7 +83,12 @@ import {
   employeeColumnList,
   employeeHandleList,
 } from "./data";
-import { getEduUnitList, freezeEduUnit } from "@/api/education";
+import {
+  getEduUnitList,
+  freezeEduUnit,
+  addEduUnit,
+  editEduUnit,
+} from "@/api/education";
 import {
   getAddressbookDeplList,
   appendDept,
@@ -146,7 +154,7 @@ export default {
       employeeColumnList, //人员表头
       employeeHandleList, //人员操作栏
       employeeTableData: [], //人员表格数据
-      idArr: '', //被选择人员的id 字符串
+      idArr: "", //被选择人员的id 字符串
     };
   },
   computed: {
@@ -163,7 +171,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["setCurrentDepId"]),
+    ...mapMutations(["setCurrentDepId"]), //vuex 设置部门id
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -177,7 +185,7 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
-    modify() {
+    modify(arg) {
       this.formHeader.forEach((item) => {
         item.readonly = false;
       });
@@ -449,15 +457,56 @@ export default {
 
     //单选删除（可以选择多个）
     selectSingle(arg) {
-      this.idArr += arg.id + ','
+      this.idArr += arg.id + ",";
       console.log(this.idArr);
     },
 
     //全选删除
     selectAll(arg) {
-      arg.forEach(item => {
-        this.idArr += item.id + ','
-      })
+      arg.forEach((item) => {
+        this.idArr += item.id + ",";
+      });
+    },
+
+    //新建单位接口方法
+    addEduUnit(data) {
+      addEduUnit(data).then((res) => {
+        console.log(res);
+      });
+    },
+
+    //新建单位按钮
+    addNewUnit() {
+      this.formHeader.forEach((item) => {
+        item.readonly = false;
+      });
+      this.unitManageSHow = false;
+      this.unitInfoShow = true;
+      this.addressbookShow = false;
+    },
+
+    //提交按钮（新建单位 || 编辑单位）
+    submit(arg) {
+      let flag = arg[1];
+      if (flag == "add") {
+        this.addEduUnit(arg[0]);
+      }else if(flag == "modify") {
+        this.editEduUnit(arg[0]);
+      }
+    },
+
+    //编辑单位接口方法
+    editEduUnit(data) {
+      editEduUnit(data).then((res) => {});
+    },
+
+    //编辑按钮
+    modify() {
+      this.formHeader.forEach((item) => {
+        //控制每项可编辑
+        item.readonly = false;
+      });
+      
     },
   },
   created() {},
@@ -473,12 +522,12 @@ export default {
   color: #222;
   font-size: 16px;
 }
-.form-container {
-  width: 100%;
-  height: auto;
-  display: flex;
-  justify-content: center;
-}
+// .form-container {
+//   width: 100%;
+//   height: auto;
+//   display: flex;
+//   justify-content: center;
+// }
 .tree-area {
   width: 100%;
   height: 100%;
