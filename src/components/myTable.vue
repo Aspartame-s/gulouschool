@@ -10,9 +10,11 @@
       :load="load"
       :tree-props="{ hasChildren: 'hasSons' }"
       ref="myTable"
+      @select="select"
+      @select-all="selectAll"
       id="table"
     >
-      <el-table-column type="selection" width="55" v-if="false">
+      <el-table-column type="selection" width="55" v-if="hasSelect">
       </el-table-column>
       <el-table-column
         show-overflow-tooltip
@@ -62,6 +64,10 @@ export default {
       type: Array,
       default: [],
     },
+    hasSelect: {
+      type: Boolean,
+      default: false
+    }
   },
   components: {},
   data() {
@@ -87,7 +93,19 @@ export default {
     handleRow(index, row, flag) {
       this.$emit("handleRow", index, row, flag);
     },
-    
+
+    //单选
+    select(selection, row) {
+      // console.log(selection)
+      console.log(row)
+      this.$emit('selectSingle', row)
+    },
+
+    //全选
+    selectAll(selection) {
+      // console.log(selection)
+      this.$emit('selectAll', selection)
+    }
     //全选
     // tableSelectAll() {
     //   //清空半选数组，此数组请提前在data中定义

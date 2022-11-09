@@ -3,7 +3,7 @@
     <div v-if="unitManageSHow">
       <div class="handle-btn-container">
         <div class="add-unit yellow-btn">新建单位</div>
-        <div class="freeze-unit yellow-btn">冻结单位</div>
+        <!-- <div class="freeze-unit yellow-btn">冻结单位</div> -->
       </div>
       <my-table
         :tableData="tableData1"
@@ -56,6 +56,10 @@
           :tableData="employeeTableData"
           :columnList="employeeColumnList"
           :handleList="employeeHandleList"
+          @handleRow="handleRow(arguments)"
+          :hasSelect="true"
+          @selectSingle="selectSingle"
+          @selectAll="selectAll"
           ref="parentTable"
           id="table"
         ></my-table>
@@ -76,16 +80,22 @@ import {
   employeeColumnList,
   employeeHandleList,
 } from "./data";
-import { getEduUnitList } from "@/api/education";
+import { getEduUnitList, freezeEduUnit } from "@/api/education";
 import {
   getAddressbookDeplList,
   appendDept,
   deleteDept,
   editDept,
 } from "@/api/addressbook";
-import { getAllEmployeeList } from "@/api/employee";
+import {
+  getAllEmployeeList,
+  deleteEmployee,
+  deleteEmployees,
+} from "@/api/employee";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
+import { mapMutations } from "vuex";
+import { mapState } from "vuex";
 export default {
   components: {
     myTable,
@@ -136,9 +146,12 @@ export default {
       employeeColumnList, //人员表头
       employeeHandleList, //人员操作栏
       employeeTableData: [], //人员表格数据
+      idArr: '', //被选择人员的id 字符串
     };
   },
-  computed: {},
+  computed: {
+    ...mapState(["currentDepId"]),
+  },
   watch: {
     $route(e) {
       console.log(e);
@@ -150,6 +163,7 @@ export default {
     },
   },
   methods: {
+    ...mapMutations(["setCurrentDepId"]),
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -190,7 +204,7 @@ export default {
         console.log(this.tableData1);
       });
     },
-    //通讯录列表
+    //通讯录部门列表
     getAddressbookDeplList(eduUnitId, id, pid, time) {
       getAddressbookDeplList(eduUnitId, id, pid).then((res) => {
         console.log(res);
@@ -201,7 +215,8 @@ export default {
           this.$set(item, "isLeaf", !item.hasSons);
         });
         this.treeData = res.data;
-        this.getAllEmployeeList(res.data[0].id);
+        this.setCurrentDepId({ id: res.data[0].id });
+        this.getAllEmployeeList(res.data[0].id); //在部门列表接口里调用获取部门人员接口感觉有点问题
       });
     },
     //table 操作栏
@@ -210,7 +225,7 @@ export default {
       console.log(info);
       // this.infoForm = info
       this.eduUnitId = info.id;
-      const handleFlag = data[2]; // 1 查看单位信息 2 查看通讯录 3 编辑
+      const handleFlag = data[2]; // 1查看单位信息 2查看通讯录 3冻结单位 4编辑人员信息 5删除人员
       switch (handleFlag) {
         case 1:
           this.unitManageSHow = false;
@@ -221,6 +236,7 @@ export default {
             item.readonly = true;
           });
           this.$nextTick(() => {
+            // console.log(this.$refs.myForm)
             this.$refs.myForm.form = info;
           });
           break;
@@ -231,16 +247,27 @@ export default {
           this.addressbookShow = true;
           break;
         case 3:
-          this.unitManageSHow = false;
-          this.unitInfoShow = true;
+          this.unitManageSHow = true;
+          this.unitInfoShow = false;
           this.addressbookShow = false;
-          this.formHeader.forEach((item) => {
-            //控制每项可编辑
-            item.readonly = false;
-          });
-          this.$nextTick(() => {
-            this.$refs.myForm.form = info;
-          });
+          const data = {
+            id: info.id,
+          };
+          // this.formHeader.forEach((item) => {
+          //   //控制每项可编辑
+          //   item.readonly = false;
+          // });
+          // this.$nextTick(() => {
+          //   this.$refs.myForm.form = info;
+          // });
+          break;
+        case 4:
+          console.log("编辑人员");
+          break;
+        case 5:
+          console.log("删除人员");
+          const employId = info.id;
+          this.deleteEmployee(employId);
           break;
       }
       console.log(data);
@@ -255,9 +282,9 @@ export default {
       console.log(arg);
       const resolve = arg[1];
       setTimeout(() => {
+        //这里没有用 this.getAddressbookDeplList 方法 而是直接使用http的接口方法 所以和全局获取部门列表接口无关 这是一个独立的获取部门列表的接口
         getAddressbookDeplList(this.eduUnitId, "", arg[0].data.id).then(
           (res) => {
-            console.log("执行了");
             res.data.forEach((item) => {
               this.$set(item, "isLeaf", !item.hasSons);
             });
@@ -349,6 +376,7 @@ export default {
     },
     //点击部门 搜索该部门（包含子部门下的员工）
     getAccurateEmployeeList(id) {
+      this.setCurrentDepId({ id: id });
       this.getAllEmployeeList(id);
     },
     //table 顶部颜色按钮操作
@@ -369,9 +397,7 @@ export default {
           // console.log(this.$refs.parentTable.$children[0].$el.id)
           // const eleId = this.$refs.parentTable.$children[0].$el.id;
           // console.log(document.querySelector('table'))
-          let wb = XLSX.utils.table_to_book(
-            document.querySelector("#table")
-          );
+          let wb = XLSX.utils.table_to_book(document.querySelector("#table"));
           /* 获取二进制字符串作为输出 */
           var wbout = XLSX.write(wb, {
             bookType: "xlsx",
@@ -395,8 +421,43 @@ export default {
           break;
         case 5:
           console.log("删除");
+          this.deleteEmployees(this.idArr);
           break;
       }
+    },
+    //冻结单位
+    freezeEduUnit(data) {
+      freezeEduUnit(data).then((res) => {
+        console.log(res);
+      });
+    },
+    //删除人员
+    deleteEmployee(id) {
+      deleteEmployee(id).then((res) => {
+        console.log(res);
+        this.getAccurateEmployeeList(this.currentDepId);
+      });
+    },
+
+    //批量删除方法
+    deleteEmployees(str) {
+      deleteEmployees(str).then((res) => {
+        console.log(res);
+        this.getAccurateEmployeeList(this.currentDepId);
+      });
+    },
+
+    //单选删除（可以选择多个）
+    selectSingle(arg) {
+      this.idArr += arg.id + ','
+      console.log(this.idArr);
+    },
+
+    //全选删除
+    selectAll(arg) {
+      arg.forEach(item => {
+        this.idArr += item.id + ','
+      })
     },
   },
   created() {},
@@ -445,6 +506,7 @@ export default {
   height: 40px;
   display: flex;
   justify-content: center;
+  margin-top: 50px;
   &:last-child {
     margin-right: 0;
   }

@@ -58,7 +58,7 @@ export const formHeader = [ //form 表头数据
       {
         itemType: "selectTwo", // 下拉框类型二，枚举值单选，在点击下拉选项时根据枚举id发请求，获取枚举值
         labelName: "上级单位",
-        propName: "superior",
+        propName: "pid",
         isRequired: true,
         placeholder: "请选择",
         readonly: true,
@@ -150,7 +150,7 @@ export const formHeader = [ //form 表头数据
       handleFlag: 2,
     },
     {
-      handleName: "编辑",
+      handleName: "冻结",
       handleFlag: 3,
     },
   ]

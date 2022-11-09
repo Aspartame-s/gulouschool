@@ -7,3 +7,25 @@ export const getAllEmployeeList = (deptId) => {
         method: 'get'
     })
 }
+
+//删除人员
+export const deleteEmployee = (id) => {
+    return request({
+        url: `/employee`,
+        method: 'delete',
+        params: {
+            id: id
+        }
+    })
+}
+
+//批量删除人员
+export const deleteEmployees = (str) => {
+    return request({
+        url: `/employee/batch`,
+        method: 'delete',
+        params: {
+            ids: str
+        }
+    })
+}
