@@ -9,7 +9,9 @@ const store = new Vuex.Store({
         currentDepId: '',
         avatarUrl: '',
         deptArr: [],
-        formSubmitFlag: 'employee'
+        formSubmitFlag: 'employee',
+        currentUnitId: '',
+        employeeHandleFlag: ''
     },
     mutations: {
         // 增加nutations属性
@@ -28,7 +30,13 @@ const store = new Vuex.Store({
         },
         setFormSubmitFlag(state, payload) {
             state.formSubmitFlag = payload.formSubmitFlag
-        }
+        },
+        setCurrentUnitId(state, payload) {
+            state.currentUnitId = payload.id
+        },
+        setEmployeeHandleFlag(state, payload) {
+            state.employeeHandleFlag = payload.flag
+        },
       }
   });
   

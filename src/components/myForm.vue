@@ -128,10 +128,11 @@
             :fetch-suggestions="querySearch"
             :placeholder="item.placeholder"
             :trigger-on-focus="false"
+            :readonly="item.readonly"
             @select="handleSelect"
           ></el-autocomplete>
         </el-form-item>
-        
+
         <!-- 当类型为下拉框一时，固定下拉选项 -->
         <el-form-item
           v-if="item.itemType == 'selectOne'"
@@ -242,12 +243,14 @@
             :remote-method="remoteMethod"
             size="small"
             @change="change"
+            value-key="id"
+            ref="selectDom"
           >
             <el-option
               v-for="(ite, ind) in options"
-              :key="ind"
-              :label="ite.label"
-              :value="ite.value"
+              :key="ite.id"
+              :label="ite.name"
+              :value="ite"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -385,14 +388,20 @@ export default {
       // 校验规则
       validateEveryData: validateEveryData,
       pid: "",
-      handleFlag: "modify",
+      handleFlag: "add",
       imageUrl: "",
       options: [],
       uploadFileUrl: process.env.VUE_APP_BASE_API + "/employee/avatar",
     };
   },
   computed: {
-    ...mapState(["avatarUrl", "deptArr", "formSubmitFlag"]),
+    ...mapState([
+      "avatarUrl",
+      "deptArr",
+      "formSubmitFlag",
+      "currentUnitId",
+      "employeeHandleFlag",
+    ]),
   },
   watch: {},
   methods: {
@@ -433,26 +442,46 @@ export default {
       this.$emit("modify");
     },
     submit() {
-      console.log(this.formSubmitFlag)
+      // console.log(this.handleFlag);
+      // console.log(this.formSubmitFlag);
+      // console.log(this.pid);
       // 提交按钮
       if (this.formSubmitFlag == "employee") {
-        delete this.form.addrbookDepts;
-        this.form["addrbookDepts"] = this.deptArr;
-        this.$refs.form.validate((valid) => {
-          if (valid) {
-            this.$emit("submitEmployee", this.form, 'add');
-          } else {
-            console.log("error submit!!");
-            return false;
-          }
-        });
-      } else if(this.formSubmitFlag == "unit") {
+        if (this.employeeHandleFlag == "addEmployee") {
+          delete this.form.addrbookDepts;
+          this.form["addrbookDepts"] = this.deptArr;
+          console.log(this.deptArr);
+          this.$refs.form.validate((valid) => {
+            if (valid) {
+              this.$emit("submitEmployee", this.form, this.employeeHandleFlag);
+            } else {
+              console.log("error submit!!");
+              return false;
+            }
+          });
+        } else {
+          delete this.form.addrbookDepts;
+          this.form["addrbookDepts"] = this.deptArr;
+          console.log(this.deptArr);
+          this.$refs.form.validate((valid) => {
+            if (valid) {
+              this.$emit("submitEmployee", this.form, this.employeeHandleFlag);
+            } else {
+              console.log("error submit!!");
+              return false;
+            }
+          });
+        }
+      } else if (this.formSubmitFlag == "unit") {
         let form2 = Object.assign({}, this.form);
         if (this.pid) {
           form2.pid = this.pid;
+        } else {
+          form2.pid = "";
         }
         this.$refs.form.validate((valid) => {
           if (valid) {
+            console.log(form2.pid);
             this.$emit("submit", form2, this.handleFlag);
           } else {
             console.log("error submit!!");
@@ -513,8 +542,10 @@ export default {
     //selectThree sssssss
     //搜索部门接口方法
     getAddressbookDeplList(query) {
+      let that = this;
+      console.log(this.currentUnitId);
       return new Promise(function (resolve, reject) {
-        getAddressbookDeplList("1587642076351098882", "", "", query).then(
+        getAddressbookDeplList(that.currentUnitId, "", "", query).then(
           (res) => {
             resolve(res.data);
           }
@@ -524,30 +555,52 @@ export default {
     //远程搜索部门
     async remoteMethod(query) {
       let arr = await this.getAddressbookDeplList(query);
-      console.log(arr);
-      arr.forEach((item) => {
-        let obj = `{"id":"${item.id}","name":"${item.name}","pid":"${item.pid}","eduUnitId":"${item.eduUnitId}"}`;
-        item = Object.assign(item, { value: obj, label: item.name });
-      });
+      // arr.forEach((item) => {
+      //   // let obj = `{"id":"${item.id}","name":"${item.name}","pid":"${item.pid}","eduUnitId":"${item.eduUnitId}"}`;
+      //   // item = Object.assign(item, { value: obj, label: item.name });
+      //   item = Object.assign(item, { label: item.name });
+      // });
       // console.log(query);
       this.options = arr;
+      console.log(this.options);
     },
 
     change(e) {
-      // console.log(JSON.parse(e[0]));
-      var arr = [];
-      e.forEach((item) => {
-        item = JSON.parse(item);
-        console.log(item);
-        arr.push(item);
-      });
-      console.log(arr);
-      this.setDeptArr(arr);
-      // this.form.addrbookDepts = this.deptArr
+      console.log(e);
+      this.setDeptArr(e);
+      // if (this.employeeHandleFlag == "addEmployee") {
+      //   var arr = [];
+      //   e.forEach((item) => {
+      //     item = JSON.parse(item);
+      //     console.log(item);
+      //     arr.push(item);
+      //   });
+      //   console.log(arr);
+      //   this.setDeptArr(arr);
+      //   // this.form.addrbookDepts = this.deptArr
+      // } else {
+      //   console.log(e);
+      //   console.log(this.form);
+      // }
     },
   },
   created() {},
-  mounted() {},
+  mounted() {
+    this.$nextTick(() => {
+      console.log(this.form);
+      // this.form
+      this.form.addrbookDepts.forEach((item) => {
+        this.$refs.selectDom[0].cachedOptions.push({
+          currentLabel: item.name,
+          currentValue: item,
+          label: item.name,
+          value: item
+        });
+      });
+
+      console.log(this.$refs.selectDom);
+    });
+  },
 };
 </script>
 <style lang='scss' scoped>

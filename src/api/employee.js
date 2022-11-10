@@ -50,3 +50,12 @@ export const addNewEmployee = (data) => {
         data
     })
 }
+
+//编辑员工
+export const editEmployee = (data) => {
+    return request({
+        url: '/employee',
+        method: 'put',
+        data
+    })
+}

@@ -68,7 +68,8 @@ export const formHeader = [ //form 表头数据
         itemType: "search", // 下拉框类型二，枚举值单选，在点击下拉选项时根据枚举id发请求，获取枚举值
         labelName: "上级单位",
         propName: "parentName",
-        isRequired: true,
+        isRequired: false,
+        readonly: true,
         placeholder: "请输入上级单位",
         readonly: true
       },
@@ -233,11 +234,11 @@ export const formHeader = [ //form 表头数据
         optionsArr: [
           {
             label: "男",
-            value: 1,
+            value: "1",
           },
           {
             label: "女",
-            value: 2,
+            value: "2",
           },
         ],
       },
@@ -258,11 +259,11 @@ export const formHeader = [ //form 表头数据
         optionsArr: [
           {
             label: "否",
-            value: 0,
+            value: "0",
           },
           {
             label: "是",
-            value: 1,
+            value: "1",
           },
         ],
       },

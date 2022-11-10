@@ -70,15 +70,16 @@
     </div>
 
     <!-- 人员编辑界面 -->
-    <div v-if="true">
-      <div class="title">单位信息</div>
+    <div v-if="employeeInfoShow">
+      <div class="title">基础信息</div>
 
       <my-form
-        ref="myForm"
+        ref="employeeForm"
         :formHeader="employeeFormHeader"
         @submitForm="submitForm"
         @resetForm="resetForm"
         @submitEmployee="submitEmployee(arguments)"
+        @showUnitManage="showUnitManage"
       >
       </my-form>
       <!-- <div class="btn-container">
@@ -87,7 +88,6 @@
         <div class="btn submit" @click="submit">提交</div>
       </div> -->
     </div>
-
   </div>
 </template>
 
@@ -102,7 +102,7 @@ import {
   columnList,
   employeeColumnList,
   employeeHandleList,
-  employeeFormHeader
+  employeeFormHeader,
 } from "./data";
 import {
   getEduUnitList,
@@ -120,7 +120,8 @@ import {
   getAllEmployeeList,
   deleteEmployee,
   deleteEmployees,
-  addNewEmployee
+  addNewEmployee,
+  editEmployee,
 } from "@/api/employee";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
@@ -172,6 +173,7 @@ export default {
       unitManageSHow: true,
       unitInfoShow: false,
       addressbookShow: false,
+      employeeInfoShow: false,
       infoForm: {},
       deptId: "", //部门id 根据部门id查询员工(包含子部门)
       employeeColumnList, //人员表头
@@ -190,11 +192,17 @@ export default {
         this.unitManageSHow = true;
         this.unitInfoShow = false;
         this.addressbookShow = false;
+        this.employeeInfoShow = false;
       }
     },
   },
   methods: {
-    ...mapMutations(["setCurrentDepId", "setFormSubmitFlag"]), //vuex 设置部门id
+    ...mapMutations([
+      "setCurrentDepId",
+      "setFormSubmitFlag",
+      "setCurrentUnitId",
+      "setEmployeeHandleFlag",
+    ]), //vuex 设置部门id
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -214,9 +222,19 @@ export default {
       });
     },
     showUnitManage() {
-      this.unitManageSHow = true;
-      this.unitInfoShow = false;
-      this.addressbookShow = false;
+      console.log(this.formSubmitFlag)
+
+      if (this.formSubmitFlag == "employee") {
+         this.unitManageSHow = false;
+        this.unitInfoShow = false;
+        this.addressbookShow = true;
+        this.employeeInfoShow = false;
+      } else {
+        this.unitManageSHow = true;
+        this.unitInfoShow = false;
+        this.addressbookShow = false;
+        this.employeeInfoShow = false;
+      }
     },
     submitForm(form) {
       console.log("表单提交喽", form);
@@ -246,8 +264,10 @@ export default {
           this.$set(item, "isLeaf", !item.hasSons);
         });
         this.treeData = res.data;
-        this.setCurrentDepId({ id: res.data[0].id });
-        this.getAllEmployeeList(res.data[0].id); //在部门列表接口里调用获取部门人员接口感觉有点问题
+        if (res.data.length && res.data[0].id) {
+          this.setCurrentDepId({ id: res.data[0].id });
+          this.getAllEmployeeList(res.data[0].id); //在部门列表接口里调用获取部门人员接口感觉有点问题
+        }
       });
     },
     //table 操作栏
@@ -255,14 +275,17 @@ export default {
       const info = data[1];
       console.log(info);
       // this.infoForm = info
-      this.eduUnitId = info.id;
       const handleFlag = data[2]; // 1查看单位信息 2查看通讯录 3冻结单位 4编辑人员信息 5删除人员
       switch (handleFlag) {
         case 1:
-          this.setFormSubmitFlag({formSubmitFlag: 'unit'})
+          this.eduUnitId = info.id;
+
+          this.setFormSubmitFlag({ formSubmitFlag: "unit" });
           this.unitManageSHow = false;
           this.unitInfoShow = true;
           this.addressbookShow = false;
+          this.employeeInfoShow = false;
+
           this.formHeader.forEach((item) => {
             //控制每项只读
             item.readonly = true;
@@ -271,18 +294,28 @@ export default {
             // console.log(this.$refs.myForm)
             this.$refs.myForm.form = info;
           });
-          console.log(this.formSubmitFlag)
+          console.log(this.formSubmitFlag);
           break;
         case 2:
+          this.eduUnitId = info.id;
+
+          this.setCurrentUnitId({ id: info.id });
+
           this.getAddressbookDeplList(this.eduUnitId, "", 0, "first");
           this.unitManageSHow = false;
           this.unitInfoShow = false;
           this.addressbookShow = true;
+          this.employeeInfoShow = false;
+
           break;
         case 3:
+          this.eduUnitId = info.id;
+
           this.unitManageSHow = true;
           this.unitInfoShow = false;
           this.addressbookShow = false;
+          this.employeeInfoShow = false;
+
           const data = {
             id: info.id,
           };
@@ -296,6 +329,22 @@ export default {
           break;
         case 4:
           console.log("编辑人员");
+          this.setEmployeeHandleFlag({ flag: "editEmployee" });
+          this.unitManageSHow = false;
+          this.unitInfoShow = false;
+          this.addressbookShow = false;
+          this.employeeInfoShow = true;
+          // let arr = [];
+          // this.$set(info, 'temporaryData', info.addrbookDepts)
+          info.addrbookDepts.forEach((item) => {
+            this.$set(item, "label", item.name);
+          });
+          // delete info.addrbookDepts;
+          // info["addrbookDepts"] = arr;
+          this.$nextTick(() => {
+            // console.log(this.$refs.myForm)
+            this.$refs.employeeForm.form = info;
+          });
           break;
         case 5:
           console.log("删除人员");
@@ -418,7 +467,12 @@ export default {
       switch (id) {
         case 1:
           console.log("添加成员");
-          this.setFormSubmitFlag({formSubmitFlag: 'employee'})
+          this.setFormSubmitFlag({ formSubmitFlag: "employee" });
+          this.setEmployeeHandleFlag({ flag: "addEmployee" });
+          this.unitManageSHow = false;
+          this.unitInfoShow = false;
+          this.addressbookShow = false;
+          this.employeeInfoShow = true;
           break;
         case 2:
           console.log("批量移动");
@@ -498,35 +552,47 @@ export default {
     addEduUnit(data) {
       addEduUnit(data).then((res) => {
         console.log(res);
+        if (res.code == "200") {
+          this.getEduUnitList();
+        }
       });
     },
 
     //新建单位按钮
     addNewUnit() {
+      this.setFormSubmitFlag({ formSubmitFlag: "unit" });
+
       this.formHeader.forEach((item) => {
         item.readonly = false;
       });
       this.unitManageSHow = false;
       this.unitInfoShow = true;
       this.addressbookShow = false;
+      this.employeeInfoShow = false;
     },
 
-    //提交按钮（新建单位 || 编辑单位 || 新建人员 || 编辑人员）
+    //提交按钮（新建单位 || 编辑单位 ）
     submit(arg) {
+      console.log(arg);
       let flag = arg[1];
       if (flag == "add") {
         this.addEduUnit(arg[0]);
-      }else if(flag == "modify") {
+      } else if (flag == "modify") {
         this.editEduUnit(arg[0]);
       }
       this.unitManageSHow = true;
       this.unitInfoShow = false;
       this.addressbookShow = false;
+      this.employeeInfoShow = false;
     },
 
     //编辑单位接口方法
     editEduUnit(data) {
-      editEduUnit(data).then((res) => {});
+      editEduUnit(data).then((res) => {
+        if (res.code == "200") {
+          this.getEduUnitList();
+        }
+      });
     },
 
     //编辑按钮
@@ -539,11 +605,31 @@ export default {
 
     //人员信息提交事件
     submitEmployee(arg) {
-      console.log(arg)
-      addNewEmployee(arg[0]).then(res => {
-        console.log(res)
-      })
-    }
+      console.log(arg);
+      const flag = arg[1];
+      if (flag == "addEmployee") {
+        addNewEmployee(arg[0]).then((res) => {
+          // console.log(res);
+          if (res.code == "200") {
+            this.getAddressbookDeplList(this.eduUnitId, "", 0);
+            this.unitManageSHow = false;
+            this.unitInfoShow = false;
+            this.addressbookShow = true;
+            this.employeeInfoShow = false;
+          }
+        });
+      } else {
+        editEmployee(arg[0]).then((res) => {
+          if (res.code == "200") {
+            this.getAddressbookDeplList(this.eduUnitId, "", 0);
+            this.unitManageSHow = false;
+            this.unitInfoShow = false;
+            this.addressbookShow = true;
+            this.employeeInfoShow = false;
+          }
+        });
+      }
+    },
   },
   created() {},
   mounted() {
