@@ -173,3 +173,105 @@ export const formHeader = [ //form 表头数据
       handleFlag: 5,
     }
   ]
+
+  //编辑 || 新增人员 formHeader
+  export const employeeFormHeader = [ //form 表头数据
+    {
+      itemType: "text", // 输入框类型
+      labelName: "员工姓名", // 输入框名字
+      propName: "employeeName", // 输入框字段名
+      isRequired: true, // 是否必填
+      readonly: false,
+      placeholder: "请输入", // 输入框placeholder提示语加上，可用于告知用户规则
+    },
+    {
+        itemType: "number",
+        labelName: "手机号",
+        propName: "phone",
+        isRequired: true,
+        readonly: false,
+        placeholder: "请输入",
+      },
+      {
+        itemType: "img",
+        labelName: "员工头像",
+        propName: "avatar",
+        isRequired: false,
+        readonly: false,
+        placeholder: "请输入",
+      },
+      {
+        itemType: "selectThree",
+        labelName: "员工部门",
+        propName: "addrbookDepts",
+        isRequired: false,
+        readonly: false,
+        placeholder: "请输入",
+      },
+      {
+        itemType: "text",
+        labelName: "职位",
+        propName: "position",
+        isRequired: false,
+        readonly: false,
+        placeholder: "请输入职位",
+      },
+      {
+        itemType: "text",
+        labelName: "微信",
+        propName: "weChat",
+        isRequired: false,
+        readonly: false,
+        placeholder: "请输入微信",
+      },
+      {
+        itemType: "selectOne", // 下拉框类型一，固定的选项可以写死在配置里，比如性别只有男女
+        labelName: "性别",
+        propName: "gender",
+        isRequired: false,
+        placeholder: "请选择性别",
+        optionsArr: [
+          {
+            label: "男",
+            value: 1,
+          },
+          {
+            label: "女",
+            value: 2,
+          },
+        ],
+      },
+      {
+        itemType: "text",
+        labelName: "邮箱",
+        propName: "email",
+        isRequired: false,
+        readonly: false,
+        placeholder: "请输入",
+      },
+      {
+        itemType: "selectOne", // 下拉框类型一，固定的选项可以写死在配置里，比如性别只有男女
+        labelName: "是否在编",
+        propName: "whetherAt",
+        isRequired: false,
+        placeholder: "请选择",
+        optionsArr: [
+          {
+            label: "否",
+            value: 0,
+          },
+          {
+            label: "是",
+            value: 1,
+          },
+        ],
+      },
+      {
+        itemType: "text",
+        labelName: "身份证号",
+        propName: "idNumber",
+        isRequired: false,
+        readonly: false,
+        placeholder: "请输入",
+      },
+  ]

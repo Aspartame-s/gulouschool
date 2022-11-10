@@ -6,7 +6,10 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
     state: {
         breadCrumb: '管理',
-        currentDepId: ''
+        currentDepId: '',
+        avatarUrl: '',
+        deptArr: [],
+        formSubmitFlag: 'employee'
     },
     mutations: {
         // 增加nutations属性
@@ -16,6 +19,15 @@ const store = new Vuex.Store({
         },
         setCurrentDepId(state, payload) {
             state.currentDepId = payload.id
+        },
+        setAvatarUrl(state, payload) {
+            state.avatarUrl = payload.avatarUrl
+        },
+        setDeptArr(state, payload) {
+            state.deptArr = payload
+        },
+        setFormSubmitFlag(state, payload) {
+            state.formSubmitFlag = payload.formSubmitFlag
         }
       }
   });

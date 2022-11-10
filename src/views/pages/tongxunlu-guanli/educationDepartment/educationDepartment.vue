@@ -68,6 +68,26 @@
         ></my-table>
       </div>
     </div>
+
+    <!-- 人员编辑界面 -->
+    <div v-if="true">
+      <div class="title">单位信息</div>
+
+      <my-form
+        ref="myForm"
+        :formHeader="employeeFormHeader"
+        @submitForm="submitForm"
+        @resetForm="resetForm"
+        @submitEmployee="submitEmployee(arguments)"
+      >
+      </my-form>
+      <!-- <div class="btn-container">
+        <div class="btn back" @click="showUnitManage">返回</div>
+        <div class="btn edit" @click="modify">编辑</div>
+        <div class="btn submit" @click="submit">提交</div>
+      </div> -->
+    </div>
+
   </div>
 </template>
 
@@ -82,6 +102,7 @@ import {
   columnList,
   employeeColumnList,
   employeeHandleList,
+  employeeFormHeader
 } from "./data";
 import {
   getEduUnitList,
@@ -99,6 +120,7 @@ import {
   getAllEmployeeList,
   deleteEmployee,
   deleteEmployees,
+  addNewEmployee
 } from "@/api/employee";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
@@ -116,6 +138,7 @@ export default {
       columnList,
       handleList,
       formHeader,
+      employeeFormHeader,
       eduUnitId: "",
       treeData: [],
       expandedKey: "", //需要展开的id && 部门id
@@ -158,7 +181,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["currentDepId"]),
+    ...mapState(["currentDepId", "formSubmitFlag"]),
   },
   watch: {
     $route(e) {
@@ -171,7 +194,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["setCurrentDepId"]), //vuex 设置部门id
+    ...mapMutations(["setCurrentDepId", "setFormSubmitFlag"]), //vuex 设置部门id
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -236,6 +259,7 @@ export default {
       const handleFlag = data[2]; // 1查看单位信息 2查看通讯录 3冻结单位 4编辑人员信息 5删除人员
       switch (handleFlag) {
         case 1:
+          this.setFormSubmitFlag({formSubmitFlag: 'unit'})
           this.unitManageSHow = false;
           this.unitInfoShow = true;
           this.addressbookShow = false;
@@ -247,6 +271,7 @@ export default {
             // console.log(this.$refs.myForm)
             this.$refs.myForm.form = info;
           });
+          console.log(this.formSubmitFlag)
           break;
         case 2:
           this.getAddressbookDeplList(this.eduUnitId, "", 0, "first");
@@ -393,6 +418,7 @@ export default {
       switch (id) {
         case 1:
           console.log("添加成员");
+          this.setFormSubmitFlag({formSubmitFlag: 'employee'})
           break;
         case 2:
           console.log("批量移动");
@@ -485,7 +511,7 @@ export default {
       this.addressbookShow = false;
     },
 
-    //提交按钮（新建单位 || 编辑单位）
+    //提交按钮（新建单位 || 编辑单位 || 新建人员 || 编辑人员）
     submit(arg) {
       let flag = arg[1];
       if (flag == "add") {
@@ -493,6 +519,9 @@ export default {
       }else if(flag == "modify") {
         this.editEduUnit(arg[0]);
       }
+      this.unitManageSHow = true;
+      this.unitInfoShow = false;
+      this.addressbookShow = false;
     },
 
     //编辑单位接口方法
@@ -506,12 +535,22 @@ export default {
         //控制每项可编辑
         item.readonly = false;
       });
-      
     },
+
+    //人员信息提交事件
+    submitEmployee(arg) {
+      console.log(arg)
+      addNewEmployee(arg[0]).then(res => {
+        console.log(res)
+      })
+    }
   },
   created() {},
   mounted() {
     this.getEduUnitList();
+    // this.unitManageSHow = false;
+    //     this.unitInfoShow = false;
+    //     this.addressbookShow = false;
   },
 };
 </script>

@@ -29,3 +29,24 @@ export const deleteEmployees = (str) => {
         }
     })
 }
+
+//上传员工头像
+export const uploadAvatar = (data) => {
+    return request({
+        url: '/employee/avatar',
+        method: 'post',
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        },
+        data
+    })
+}
+
+//新增员工
+export const addNewEmployee = (data) => {
+    return request({
+        url: '/employee',
+        method: 'post',
+        data
+    })
+}

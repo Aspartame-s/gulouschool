@@ -131,6 +131,42 @@
             @select="handleSelect"
           ></el-autocomplete>
         </el-form-item>
+        
+        <!-- 当类型为下拉框一时，固定下拉选项 -->
+        <el-form-item
+          v-if="item.itemType == 'selectOne'"
+          :key="index"
+          :label="item.labelName"
+          :prop="item.propName"
+          :rules="
+            item.isRequired
+              ? [
+                  {
+                    required: true, // 是否必填 是
+                    trigger: '', // blur 或 change 这里就不指定触发方式了，保存提交时再校验
+                    itemType: 'selectOne', // 当前类型，固定下拉框类型
+                    labelName: item.labelName, // 当前输入框的名字
+                    value: form[item.propName], // 输入框输入的绑定的值
+                    validator: validateEveryData, // 校验规则函数
+                  },
+                ]
+              : []
+          "
+        >
+          <el-select
+            v-model="form[item.propName]"
+            :placeholder="item.placeholder"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="(ite, ind) in item.optionsArr"
+              :key="ind"
+              :label="ite.label"
+              :value="ite.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
 
         <!-- 当类型为下拉框二时，属于枚举值（单选）下拉框，需要根据枚举id发请求获取枚举值 -->
         <el-form-item
@@ -173,6 +209,84 @@
             ></el-option>
           </el-select>
         </el-form-item>
+
+        <!-- 当类型为下拉框三时，属于枚举值（多选）下拉框 -->
+        <el-form-item
+          v-if="item.itemType == 'selectThree'"
+          :key="index"
+          :label="item.labelName"
+          :prop="item.propName"
+          :rules="
+            item.isRequired
+              ? [
+                  {
+                    required: true, // 是否必填 是
+                    trigger: '', // blur 或 change 这里就不指定触发方式了，保存提交时再校验
+                    itemType: 'selectTwo', // 当前类型，枚举值单选
+                    labelName: item.labelName, // 当前输入框的名字
+                    value: form[item.propName], // 输入框输入的绑定的值
+                    validator: validateEveryData, // 校验规则函数
+                  },
+                ]
+              : []
+          "
+        >
+          <el-select
+            v-model="form[item.propName]"
+            :placeholder="item.placeholder"
+            :disabled="item.readonly"
+            :loading="loadingSelect"
+            multiple
+            filterable
+            remote
+            :remote-method="remoteMethod"
+            size="small"
+            @change="change"
+          >
+            <el-option
+              v-for="(ite, ind) in options"
+              :key="ind"
+              :label="ite.label"
+              :value="ite.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+        <!-- 当类型为上传时 -->
+        <el-form-item
+          v-if="item.itemType == 'img'"
+          :key="index"
+          :label="item.labelName"
+          :prop="item.propName"
+          :rules="
+            item.isRequired
+              ? [
+                  {
+                    required: true, // 是否必填 是
+                    trigger: '', // blur 或 change 这里就不指定触发方式了，保存提交时再校验
+                    itemType: 'selectTwo', // 当前类型，枚举值单选
+                    labelName: item.labelName, // 当前输入框的名字
+                    value: form[item.propName], // 输入框输入的绑定的值
+                    validator: validateEveryData, // 校验规则函数
+                  },
+                ]
+              : []
+          "
+        >
+          <el-upload
+            class="avatar-uploader"
+            :action="uploadFileUrl"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div slot="tip" class="el-upload__tip">
+              建议尺寸640*320，小于2M的JPG、PNG的图片
+            </div>
+          </el-upload>
+        </el-form-item>
       </template>
     </el-form>
     <div class="btn-container">
@@ -185,6 +299,10 @@
 
 <script>
 import { getEduUnitList } from "@/api/education";
+import { getAddressbookDeplList } from "@/api/addressbook";
+import { uploadAvatar } from "@/api/employee";
+import { mapMutations } from "vuex";
+import { mapState } from "vuex";
 export default {
   props: {
     // 父组件传递过来的表头的数据
@@ -268,11 +386,17 @@ export default {
       validateEveryData: validateEveryData,
       pid: "",
       handleFlag: "modify",
+      imageUrl: "",
+      options: [],
+      uploadFileUrl: process.env.VUE_APP_BASE_API + "/employee/avatar",
     };
   },
-  computed: {},
+  computed: {
+    ...mapState(["avatarUrl", "deptArr", "formSubmitFlag"]),
+  },
   watch: {},
   methods: {
+    ...mapMutations(["setAvatarUrl", "setDeptArr"]), //vuex 设置当前头像url 设置当前部门arr
     // 数字类型加校验规则
     checkInput(item) {
       console.log("数字类型的再细分规则，可以根据item.labelName再写判断", item);
@@ -303,26 +427,39 @@ export default {
     showUnitManage() {
       //返回按钮
       this.$emit("showUnitManage");
-      console.log(this.form);
     },
     modify() {
       this.handleFlag = "modify";
       this.$emit("modify");
     },
     submit() {
+      console.log(this.formSubmitFlag)
       // 提交按钮
-      let form2 = Object.assign({}, this.form);
-      if (this.pid) {
-        form2.pid = this.pid;
-      }
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          this.$emit("submit", form2, this.handleFlag);
-        } else {
-          console.log("error submit!!");
-          return false;
+      if (this.formSubmitFlag == "employee") {
+        delete this.form.addrbookDepts;
+        this.form["addrbookDepts"] = this.deptArr;
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            this.$emit("submitEmployee", this.form, 'add');
+          } else {
+            console.log("error submit!!");
+            return false;
+          }
+        });
+      } else if(this.formSubmitFlag == "unit") {
+        let form2 = Object.assign({}, this.form);
+        if (this.pid) {
+          form2.pid = this.pid;
         }
-      });
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            this.$emit("submit", form2, this.handleFlag);
+          } else {
+            console.log("error submit!!");
+            return false;
+          }
+        });
+      }
     },
 
     //模糊搜索
@@ -331,15 +468,12 @@ export default {
       arr.forEach((item) => {
         item = Object.assign(item, { value: item.name });
       });
-      console.log(arr);
       cb(arr);
     },
 
     //选择搜索项
     handleSelect(item) {
-      // console.log(item);
       this.pid = item.id;
-      // console.log(form)
     },
 
     //搜索上级单位
@@ -349,6 +483,67 @@ export default {
           resolve(res.data);
         });
       });
+    },
+
+    //上传图片  sssss
+    handleAvatarSuccess(res, file) {
+      let formData = new FormData();
+      formData.append("file", file.raw);
+      uploadAvatar(formData).then((res) => {
+        console.log(res);
+        this.setAvatarUrl({ avatarUrl: res.data });
+        this.form.avatar = this.avatarUrl;
+      });
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      console.log(file);
+      const isPNG = file.type === "image/png";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isPNG) {
+        this.$message.error("上传头像图片只能是 PNG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isPNG && isLt2M;
+    },
+
+    //selectThree sssssss
+    //搜索部门接口方法
+    getAddressbookDeplList(query) {
+      return new Promise(function (resolve, reject) {
+        getAddressbookDeplList("1587642076351098882", "", "", query).then(
+          (res) => {
+            resolve(res.data);
+          }
+        );
+      });
+    },
+    //远程搜索部门
+    async remoteMethod(query) {
+      let arr = await this.getAddressbookDeplList(query);
+      console.log(arr);
+      arr.forEach((item) => {
+        let obj = `{"id":"${item.id}","name":"${item.name}","pid":"${item.pid}","eduUnitId":"${item.eduUnitId}"}`;
+        item = Object.assign(item, { value: obj, label: item.name });
+      });
+      // console.log(query);
+      this.options = arr;
+    },
+
+    change(e) {
+      // console.log(JSON.parse(e[0]));
+      var arr = [];
+      e.forEach((item) => {
+        item = JSON.parse(item);
+        console.log(item);
+        arr.push(item);
+      });
+      console.log(arr);
+      this.setDeptArr(arr);
+      // this.form.addrbookDepts = this.deptArr
     },
   },
   created() {},
@@ -387,6 +582,34 @@ export default {
     .submit {
       border: 1px solid #666666;
     }
+  }
+  /deep/ .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  /deep/ .avatar-uploader .el-upload:hover {
+    border-color: #409eff;
+  }
+  /deep/ .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  /deep/ .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+  /deep/ .el-upload__tip {
+    margin-top: -10px;
+    color: #ccc;
+    font-size: 10px;
   }
 }
 </style>

@@ -4,9 +4,9 @@ import request from '@/utils/http'
 //eduUnitId 当前点击的教育单位的id 必传
 //id 自身的id（传此参数获取自身详情）
 //pid 最上级 默认是0 （父级id）必传
-export const getAddressbookDeplList = (eduUnitId, id, pid) => {
+export const getAddressbookDeplList = (eduUnitId, id, pid, query='') => {
     return request({
-        url: `/addressbook-dept?eduUnitId=${eduUnitId}&id=${id}&pid=${pid}`,
+        url: `/addressbook-dept?eduUnitId=${eduUnitId}&id=${id}&pid=${pid}&queryName=${query}`,
         method: 'get'
     })
 }
