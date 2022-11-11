@@ -229,6 +229,7 @@ export default {
         this.unitInfoShow = false;
         this.addressbookShow = true;
         this.employeeInfoShow = false;
+        this.getAddressbookDeplList(this.eduUnitId, "", 0);
       } else {
         this.unitManageSHow = true;
         this.unitInfoShow = false;

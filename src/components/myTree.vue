@@ -27,7 +27,7 @@
             @blur="saveCurrentInp"
           ></el-input
         ></span>
-        <span class="iconfont icon-gengduo1" @click.stop>
+        <span class="iconfont icon-gengduo1" @click.stop v-if="showHandleIcon">
           <el-dropdown trigger="click">
             <span class="el-dropdown-link" ref="echarType">
               <i class="iconfont icon-gengduo"></i>
@@ -61,6 +61,10 @@ export default {
       type: String,
       default: "",
     },
+    showHandleIcon: {
+      type: Boolean,
+      default: true
+    }
   },
   components: {},
   data() {
@@ -183,9 +187,9 @@ export default {
 </script>
 <style lang='scss' scoped>
 .tree-container {
-  width: 192px;
+  width: 200px;
   .custom-tree-node {
-    width: 192px;
+    width: 200px;
     display: flex;
     align-items: center;
     position: relative;

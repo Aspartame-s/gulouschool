@@ -25,6 +25,14 @@
         v-for="(item, index) in columnList"
         :key="index"
       >
+      <template slot-scope="scope">
+        <div v-if="item.prop == 'yingyongname'" class="hasIcon">
+          <img :src="scope.row.icon" alt="" class="column-icon">
+          {{scope.row[item.prop]}}
+        </div>
+        <span v-else-if="item.prop == 'statu'" :style="{'color': scope.row[item.prop] == '待审核' ? '#4D9EFF' : scope.row[item.prop] == '已通过' ? '#11B07A' : '#FF7B7B'}">{{scope.row[item.prop]}}</span>
+        <span v-else>{{scope.row[item.prop]}}</span>
+      </template>
       </el-table-column>
       <el-table-column
         label=""
@@ -62,7 +70,9 @@ export default {
     },
     handleList: {
       type: Array,
-      default: [],
+      default: () => {
+        return [];
+      },
     },
     hasSelect: {
       type: Boolean,
@@ -256,5 +266,21 @@ export default {
 }
 /deep/ .el-checkbox__input {
   display: revert!important;
+}
+/deep/ .el-table .cell {
+  overflow: visible;
+}
+.hasIcon {
+  display: flex;
+  justify-content: center;
+  .hasIcon-span {
+    font-size: 14px;
+    color: #666;
+  }
+}
+.column-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
 }
 </style>

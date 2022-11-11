@@ -126,7 +126,7 @@ export const formHeader = [ //form 表头数据
     },
   ]
 
-  export const employeeColumnList = [
+  export const employeeColumnList = [ //人员table 表头
     {
       prop: 'employeeName',
       label: '姓名',
@@ -276,3 +276,5 @@ export const formHeader = [ //form 表头数据
         placeholder: "请输入",
       },
   ]
+
+  

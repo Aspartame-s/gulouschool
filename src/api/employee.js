@@ -8,6 +8,14 @@ export const getAllEmployeeList = (deptId) => {
     })
 }
 
+//根据部门id查询员工(不包含子部门)
+export const getSelfEmployeeList = (deptId) => {
+    return request({
+        url: `/employee/not-have-sons?deptId=${deptId}`,
+        method: 'get'
+    })
+}
+
 //删除人员
 export const deleteEmployee = (id) => {
     return request({

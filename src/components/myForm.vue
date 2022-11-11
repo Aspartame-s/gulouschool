@@ -247,7 +247,7 @@
             ref="selectDom"
           >
             <el-option
-              v-for="(ite, ind) in options"
+              v-for="ite in options"
               :key="ite.id"
               :label="ite.name"
               :value="ite"
