@@ -39,3 +39,15 @@ export const editDept = (data) => {
         data
     })
 }
+
+//批量导入通讯录
+export const importAddressBook = (data) => {
+    return request({
+        url: '/employee/excel-batch-import',
+        method: 'post',
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        },
+        data
+    })
+}

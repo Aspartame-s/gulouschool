@@ -25,14 +25,47 @@
         v-for="(item, index) in columnList"
         :key="index"
       >
-      <template slot-scope="scope">
-        <div v-if="item.prop == 'yingyongname'" class="hasIcon">
-          <img :src="scope.row.icon" alt="" class="column-icon">
-          {{scope.row[item.prop]}}
-        </div>
-        <span v-else-if="item.prop == 'statu'" :style="{'color': scope.row[item.prop] == '待审核' ? '#4D9EFF' : scope.row[item.prop] == '已通过' ? '#11B07A' : '#FF7B7B'}">{{scope.row[item.prop]}}</span>
-        <span v-else>{{scope.row[item.prop]}}</span>
-      </template>
+        <template slot-scope="scope">
+          <div v-if="item.prop == 'yingyongname'" class="hasIcon">
+            <img :src="scope.row.icon" alt="" class="column-icon" />
+            {{ scope.row[item.prop] }}
+          </div>
+          <span
+            v-else-if="item.prop == 'statu'"
+            :style="{
+              color:
+                scope.row[item.prop] == '待审核'
+                  ? '#4D9EFF'
+                  : scope.row[item.prop] == '已通过'
+                  ? '#11B07A'
+                  : '#FF7B7B',
+            }"
+            >{{ scope.row[item.prop] }}</span
+          >
+          <span v-else>{{ scope.row[item.prop] }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="权限等级"
+        v-if="hasLevelSelect"
+        width="auto"
+      >
+        <template slot-scope="scope">
+          <el-select
+            v-model="scope.row.level"
+            filterable
+            allow-create
+            default-first-option
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </template>
       </el-table-column>
       <el-table-column
         label=""
@@ -76,8 +109,18 @@ export default {
     },
     hasSelect: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
+    hasLevelSelect: {
+      type: Boolean,
+      default: false,
+    },
+    options: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
   },
   components: {},
   data() {
@@ -107,15 +150,15 @@ export default {
     //单选
     select(selection, row) {
       // console.log(selection)
-      console.log(row)
-      this.$emit('selectSingle', row)
+      console.log(row);
+      this.$emit("selectSingle", row);
     },
 
     //全选
     selectAll(selection) {
       // console.log(selection)
-      this.$emit('selectAll', selection)
-    }
+      this.$emit("selectAll", selection);
+    },
     //全选
     // tableSelectAll() {
     //   //清空半选数组，此数组请提前在data中定义
@@ -265,7 +308,7 @@ export default {
   }
 }
 /deep/ .el-checkbox__input {
-  display: revert!important;
+  display: revert !important;
 }
 /deep/ .el-table .cell {
   overflow: visible;

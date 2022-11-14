@@ -30,6 +30,14 @@ const routes = [
             component: () => import('../views/pages/tongxunlu-guanli/educationDepartment/educationDepartment.vue')
           },
           {
+            path: 'import',
+            name: 'import',
+            meta: {
+              title: '教育主管部门'
+            },
+            component: () => import('../views/pages/tongxunlu-guanli/educationDepartment/test.vue')
+          },
+          {
             path: 'school',
             name: 'school',
             meta: {
@@ -89,14 +97,14 @@ const routes = [
           },
         ]
       },
-      {
-        path: '/test',
-        name: 'test',
-        meta: {
-          title: '测试'
-        },
-        component: () => import('../views/pages/test.vue')
-      }
+      // {
+      //   path: '/test',
+      //   name: 'test',
+      //   meta: {
+      //     title: '测试'
+      //   },
+      //   component: () => import('../views/pages/test.vue')
+      // }
     ]
   }
   // {

@@ -37,6 +37,8 @@
 // import myitem from "./myitem.vue";
 // import { recursiveFunction } from "../../utils/recursive";
 import { mapState } from 'vuex';
+import { mapMutations } from "vuex";
+
 export default {
   name: "Index",
   components: {
@@ -105,12 +107,12 @@ export default {
             },
           ],
         },
-        {
-          name: "测试",
-          icon: "iconfont icon-api-fill",
-          path: "/test",
-          children: [],
-        },
+        // {
+        //   name: "测试",
+        //   icon: "iconfont icon-api-fill",
+        //   path: "/test",
+        //   children: [],
+        // },
       ],
       breadCrumbList: [],
     };
@@ -120,16 +122,26 @@ export default {
   },
   watch: {
     $route(e) {
+      console.log(e)
       let matchedArr = e.matched;
       matchedArr.shift();
       this.breadCrumbList = matchedArr;
+      this.setBreadCrumb({breadCrumb: e.meta.title == "教育主管部门" ? '单位管理' : e.meta.title})
+
       //   console.log(this)
       //   let arr = recursiveFunction(e.fullPath, this.menuList);
       //   this.breadCrumbList.push(arr[0].name);
       //   console.log(arr);
     },
+     
+  },
+  beforeRouteEnter(to, from, next){
+    // console.log(to)
+    next()
   },
   methods: {
+    ...mapMutations(['setBreadCrumb']),
+    
     menuSelect(index, indexPath) {
       // console.log(indexPath)
       //   this.breadCrumbList = [];

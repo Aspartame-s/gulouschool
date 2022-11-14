@@ -1,5 +1,5 @@
 <template>
-<div>学校</div>
+<div></div>
 </template>
 
 <script>

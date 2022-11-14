@@ -12,7 +12,7 @@ module.exports = {
         open:false, //自动打开默认浏览器
         proxy: {
             [process.env.VUE_APP_BASE_API]: {
-                target: `http://192.168.1.100:10002`,
+                target: `https://api.ipyingshe.net`,
                 changeOrigin: true,
                 pathRewrite: {
                   ['^' + process.env.VUE_APP_BASE_API]: ''

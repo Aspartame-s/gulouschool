@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
-        breadCrumb: '管理',
+        breadCrumb: '',
         currentDepId: '',
         avatarUrl: '',
         deptArr: [],

@@ -586,7 +586,10 @@ export default {
   },
   created() {},
   mounted() {
-    this.$nextTick(() => {
+    if(this.formSubmitFlag == 'unit') {
+
+    }else {
+      this.$nextTick(() => {
       console.log(this.form);
       // this.form
       this.form.addrbookDepts.forEach((item) => {
@@ -600,6 +603,8 @@ export default {
 
       console.log(this.$refs.selectDom);
     });
+    }
+    
   },
 };
 </script>

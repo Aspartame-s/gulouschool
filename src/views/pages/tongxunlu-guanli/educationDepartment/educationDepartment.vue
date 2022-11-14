@@ -88,6 +88,7 @@
         <div class="btn submit" @click="submit">提交</div>
       </div> -->
     </div>
+    <!-- <div @click="go">go</div> -->
   </div>
 </template>
 
@@ -197,6 +198,9 @@ export default {
     },
   },
   methods: {
+    // go() {
+    //   this.$router.push('import')
+    // },
     ...mapMutations([
       "setCurrentDepId",
       "setFormSubmitFlag",
@@ -222,10 +226,10 @@ export default {
       });
     },
     showUnitManage() {
-      console.log(this.formSubmitFlag)
+      console.log(this.formSubmitFlag);
 
       if (this.formSubmitFlag == "employee") {
-         this.unitManageSHow = false;
+        this.unitManageSHow = false;
         this.unitInfoShow = false;
         this.addressbookShow = true;
         this.employeeInfoShow = false;
@@ -480,6 +484,8 @@ export default {
           break;
         case 3:
           console.log("批量导入");
+          this.$router.push("import");
+
           break;
         case 4:
           // console.log("批量导出");
@@ -701,5 +707,14 @@ export default {
   .submit {
     border: 1px solid #666666;
   }
+}
+.import-back {
+  width: 63px;
+  height: 28px;
+  border-radius: 4px;
+  @include center;
+  color: #fff;
+  background-color: #02bba4;
+  font-size: 14px;
 }
 </style>
