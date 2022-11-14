@@ -95,8 +95,8 @@
               <i class="el-icon-success"></i>
               已通过，并发送以下数据至对方账号
               </div>
-          <div class="info-item second">App_ID：********</div>
-          <div class="info-item second" >Secret：********</div>
+          <div class="info-item second">App_ID：381273872</div>
+          <div class="info-item second" >Secret：djlaksj213jasld232saa</div>
       </div>
       <div class="btn-container" v-if="isSuccess">
         <div class="success btn" @click="success">通过</div>
@@ -234,6 +234,13 @@ export default {
       this.showDetail = true;
       console.log(arg);
       this.formInfo = arg[1];
+      if(arg[1].statu !== '待审核') {
+          this.showSuccessInfo = true
+          this.isSuccess = false
+      }else {
+          this.showSuccessInfo = false
+          this.isSuccess = true
+      }
       this.setCurrentAuditIndex({ index: arg[0] });
     },
     success() {

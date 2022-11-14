@@ -22,6 +22,7 @@
         <span class="name">夏老师</span>
         <img src="../../assets/img/tip.png" alt="" class="tip-icon" />
         <span class="message">您好！您当前有新的事物要处理。</span>
+        <img src="../../assets/img/bell.png" alt="" class="bell">
       </div>
       <div class="bread-crumb-container">
         <bread-crumb :data="breadCrumbList" style="margin-bottom: 6px"></bread-crumb>
@@ -136,7 +137,7 @@ export default {
      
   },
   beforeRouteEnter(to, from, next){
-    // console.log(to)
+    console.log(to)
     next()
   },
   methods: {
@@ -154,9 +155,12 @@ export default {
     let matchedArr = this.$route.matched;
     matchedArr.shift();
     this.breadCrumbList = matchedArr;
+    console.log(this.$route, 'sss')
+    
+    this.setBreadCrumb({breadCrumb: this.$route.meta.title == "教育主管部门" ? '单位管理' : this.$route.meta.title})
+
   },
   mounted() {
-    console.log(this.breadCrumb)
     // let arr = recursiveFunction("/education-department", this.menuList);
     // console.log(arr);
   },
@@ -216,6 +220,7 @@ export default {
       display: flex;
       align-items: center;
       padding-left: 36px;
+      position: relative;
       .avatar {
         width: 24px;
         height: 24px;
@@ -237,6 +242,12 @@ export default {
       .message {
         font-size: 14px;
         color: #666666;
+      }
+      .bell {
+        width: 22px;
+        height: 22px;
+        position: absolute;
+        right: 36px;
       }
     }
     .bread-crumb-container {

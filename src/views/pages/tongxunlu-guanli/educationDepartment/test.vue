@@ -100,9 +100,9 @@ export default {
       fileName: "",
       file: null,
       isSuccess: false,
-      successUploadPersonNum: 32,
-      coverPersonNum: 5,
-      noChangePersonNum: 3,
+      successUploadPersonNum: 3,
+      coverPersonNum: 3,
+      noChangePersonNum: 0,
     };
   },
   computed: {},
@@ -124,7 +124,7 @@ export default {
     importFile() {
       let fd = new FormData();
       fd.append("file", this.file); //传文件
-      fd.append("deptId", "1590586483538796546"); //传其他参数
+      fd.append("deptId", "1590588066309742593"); //传其他参数
       importAddressBook(fd).then((res) => {
         console.log(res);
         if (res.code == "200") {

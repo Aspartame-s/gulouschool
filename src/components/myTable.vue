@@ -14,10 +14,10 @@
       @select-all="selectAll"
       id="table"
     >
-      <el-table-column type="selection" width="55" v-if="hasSelect">
+      <el-table-column type="selection" width="65" v-if="hasSelect">
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+      :show-overflow-tooltip="true"
         :prop="item.prop"
         :label="item.label"
         width="auto"
@@ -99,7 +99,9 @@ export default {
     },
     columnList: {
       type: Array,
-      default: [],
+      default: () => {
+        return [];
+      },
     },
     handleList: {
       type: Array,
@@ -311,7 +313,7 @@ export default {
   display: revert !important;
 }
 /deep/ .el-table .cell {
-  overflow: visible;
+  // overflow: visible;
 }
 .hasIcon {
   display: flex;
